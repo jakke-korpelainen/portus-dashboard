@@ -1,5 +1,7 @@
 # Dashboard Proto for Housing Company
 
+[![Test Suite](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/rust.yml/badge.svg)](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/rust.yml)
+
 A simple dashboard prototype for a housing company. The dashboard will eventually show the current weather, news, and nearby transit data. The dashboard is built with Rust and Axum, and uses the Digitransit API for transit data, and an Weather API (TBA) for weather data. The dashboard is a work in progress and will be updated with more features in the future.
 
 Aiming to run this on raspberry with a small screen in the lobby.
