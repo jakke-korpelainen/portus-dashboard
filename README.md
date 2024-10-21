@@ -17,6 +17,27 @@ askama, axum, reqwest, serde, serde_json, tokio
 - News
 - Weather
 
+### Resident data
+
+Looking into where I could find this up-to-date.
+
+### Weather from yr.no
+
+Yr.no provides a free modern weather API that serves JSON.
+
+- [API documentation](https://developer.yr.no/doc/locationforecast/)
+- [Example request](https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=60.188374&lon=24.984065)
+
+### Transport data from Digitransit.fi
+
+Digitransit provides a free API for transport data in Finland.
+
+- [API documentation](https://digitransit.fi/en/developers/)
+
+### News
+
+TBA
+
 ## Development
 
 1. Get API Key from [Digitransit.fi](https://digitransit.fi/en/developers/)
