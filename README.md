@@ -25,7 +25,7 @@ Looking into where I could find this up-to-date.
 
 Yr.no provides a free modern weather API that serves JSON.
 
-- [API documentation](https://developer.yr.no/doc/locationforecast/)
+- [API documentation](https://api.met.no/weatherapi/locationforecast/2.0/documentation)
 - [Example request](https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=60.188374&lon=24.984065)
 
 ### Transport data from Digitransit.fi
