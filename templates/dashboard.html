@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <style>
+      main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      #residents {
+        grid-column: 1 / 2;
+      }
+
+      #feed {
+        grid-column: 2 / 2;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .arrival {
+        border: 1px solid #ccc;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+
+  <body class="prose max-w-full">
+    <header class="flex items-center justify-between px-6 py-4 border-b">
+      <h1 class="text-2xl font-bold mb-0">
+        {{ housing_company.name }}<br />
+        <span class="text-lg"> {{ housing_company.address }} </span>
+      </h1>
+    </header>
+
+    <main class="px-5">
+      <div
+        id="residents"
+        style="
+          background-color: #f9f9f9;
+          border: 2px solid #ddd;
+          padding: 1rem;
+          border-radius: 8px;
+          box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <h2 class="mt-0">Residents</h2>
+
+        <div class="grid grid-cols-3 grid-rows-2">
+          {% for group in residents %}
+          <div class="mb-5 p-5 border-2 border-gray-300 rounded-lg">
+            <h3 class="mt-0 mb-1">{{ group.floor }}</h3>
+            <ul style="list-style-type: none; padding: 0">
+              {% for resident in group.residents %}
+              <li style="padding: 0.5rem; border-bottom: 1px solid #ddd">
+                {{ resident.apartment }} - {{ resident.name }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div id="feed">
+        <div class="grid gap-4 grid-rows-2">
+          <div class="grid gap-4 grid-cols-2">
+            <div class="weather col-span-2">
+              <h4>
+                Weather
+                <span>{{ weather.properties.meta.updated_at }}</span>
+              </h4>
+              <div class="flex flex-col">
+                <!-- forecast description-->
+                {% match weather.properties.timeseries[0].data.next_1_hours %}
+                  {% when Some with (forecast) %}
+                  <p class="font-bold uppercase">{{ forecast.summary.symbol_code }}</p>
+                  {% when None %}
+                {% endmatch %}
+                <!-- forecast values (datalist) -->
+                <dl class="mt-5">
+                  {% match weather.properties.timeseries[0].data.instant.details.air_temperature %}
+                    {% when Some with (air_temperature) %}
+                    <div class="grid grid-cols-4">
+                      <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">Temperature</dt>
+                      <dd class="mt-1 text-sm leading-6">{{ air_temperature }} {{ weather.properties.meta.units.air_temperature }}</dd>
+                    </div>
+                    {% when None %}
+                  {% endmatch %}
+                  {% match weather.properties.timeseries[0].data.instant.details.wind_speed %}
+                  {% when Some with (wind_speed) %}
+                  <div class="grid grid-cols-4">
+                    <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">Wind</dt>
+                    <dd class="mt-1 text-sm leading-6">{{ wind_speed }} {{ weather.properties.meta.units.wind_speed }}</dd>
+                  </div>
+                  {% when None %}
+                {% endmatch %}
+                </dl>
+              </div>
+            </div>
+            <div class="news">
+              <h4>News</h4>
+              <p>Placeholder</p>
+            </div>
+          </div>
+
+          <div class="transportation">
+            <h4>
+              Real-time Transportation<br />
+              <span>Nearest public transport options </span>
+            </h4>
+            <div class="max-h-96 overflow-y-scroll">
+              {% for arrival in next_arrivals %}
+              <p class="inline-flex">
+                {{ arrival.headsign }} ({{ arrival.route_short_name }})
+              </p>
+
+              <span
+                class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+              >
+                {{ arrival.arrival }}
+              </span>
+
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
