@@ -65,7 +65,7 @@ pub fn get_resident_floor(index: u8) -> u8 {
 pub fn get_residents() -> Vec<Residents> {
     let residents = (1..=RESIDENTS_AMOUNT)
         .map(|index| Resident {
-            name: get_random_name(),
+            name: get_random_name().to_uppercase(),
             floor: get_resident_floor(index),
             apartment: format!("{}{}", APARTMENT_PREFIX, index),
         })

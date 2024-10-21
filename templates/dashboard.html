@@ -63,21 +63,20 @@
     <main class="px-5">
       <div
         id="residents"
-        class="border-2 border-gray-300 p-4 rounded-lg shadow-md"
+        class="border-2 border-gray-500 p-4 rounded-lg shadow-md"
       >
         <h2 class="mt-0">Residents</h2>
         <div class="grid grid-cols-3 grid-rows-2 gap-5">
           {% for group in residents %}
-          <div class="p-5 bg-black border-2 border-gray-300 rounded-lg">
+          <div class="p-5 bg-black border-2 border-gray-500 rounded-lg">
             <h3 class="mt-0 mb-1">Floor {{ group.floor }}</h3>
-            <ul style="list-style-type: none; padding: 0">
+            <ul class="list-none p-0"></ul>
               {% for resident in group.residents %}
               <li
-                class="grid grid-cols-4 gap-2"
-                style="padding: 0.5rem; border-bottom: 1px solid #ddd"
+                class="grid grid-cols-4 gap-2 p-2 border-b border-gray-600"
               >
-                <span class="font-medium">{{ resident.apartment }}</span
-                ><span class="col-span-3">{{ resident.name }}</span>
+                <span class="font-medium font-mono tracking-widest">{{ resident.apartment }}</span
+                ><span class="col-span-3 font-mono tracking-widest">{{ resident.name }}</span>
               </li>
               {% endfor %}
             </ul>
@@ -85,7 +84,7 @@
           {% endfor %}
         </div>
       </div>
-      <div id="feed" class="border-2 border-gray-300 p-4 rounded-lg shadow-md">
+      <div id="feed" class="border-2 border-gray-500 p-4 rounded-lg shadow-md">
         <div class="grid gap-4 grid-rows-1">
           <div id="feed-tiles" class="grid gap-4 grid-cols-2 col-span-3">
             <div class="weather">
@@ -157,7 +156,7 @@
             <div class="news">
               <h4>
                 News
-                <span class="block text-xl text-gray-400">What is going on in the area</span>
+                <span class="block text-xl text-gray-400">What is going on in the building and area</span>
               </h4>
             </div>
           </div>
@@ -166,14 +165,14 @@
               Real-time Transportation
               <span class="block text-xl text-gray-400">Nearest public transport options</span>
             </h4>
-            <div class="max-h-[55dvh] overflow-y-scroll">
+            <div class="max-h-[55dvh] overflow-y-scroll rounded-lg border border-gray-600 p-5">
               {% for arrival in next_arrivals %}
-              <div class="grid grid-cols-2 p-2 my-2 border border-gray-50 gap-2 rounded-lg">
+              <div class="grid grid-cols-2 p-2 my-2 border border-gray-600 gap-2 rounded-lg">
                 <p class="m-0">
-                  {{ arrival.headsign }} ({{ arrival.route_short_name }})
+                  <span class="font-mono font-medium text-sm uppercase">{{ arrival.headsign }} ({{ arrival.route_short_name }})</span>
                 </p>
                 <span
-                  class="items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 justify-self-end"
+                  class="items-center rounded-md bg-black px-2 py-1 text-xs font-medium text-white justify-self-end"
                 >
                   {{ arrival.arrival }}
                 </span>
