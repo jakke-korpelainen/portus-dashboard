@@ -119,7 +119,7 @@ pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
             return Err(Box::new(err));
         }
     };
-    
+
     // first get text, easier to debug if something goes wrong
     let text = response.text().await.unwrap();
 
