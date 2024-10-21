@@ -8,6 +8,8 @@ use super::*;
 // basic handler that responds with a static string
 #[axum::debug_handler]
 pub async fn dashboard() -> impl IntoResponse {
+    let residents = get_residents();
+    let weather = get_weather_data().await.expect("Couldn't get weather data");
     let next_arrivals = match transportation::get_next_arrivals().await {
         Ok(data) => data,
         Err(e) => {
@@ -15,10 +17,6 @@ pub async fn dashboard() -> impl IntoResponse {
             vec![]
         }
     };
-
-    let residents = get_residents();
-
-    let weather = get_weather_data().await.expect("Couldn't get weather data");
 
     let template = DashboardTemplate {
         housing_company: HousingCompany {

@@ -21,4 +21,6 @@ target/
 #.idea/
 /target
 
+debug.html
+
 .env

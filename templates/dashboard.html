@@ -5,7 +5,19 @@
     <meta charset="UTF-8" />
     <title>Dashboard</title>
     <style>
+      body {
+        max-height: 100dvh;
+        overflow: hidden;
+        background: #16161d;
+        color: white;
+      }
+
+      header {
+        height: 10dvh;
+      }
+
       main {
+        height: 90dvh;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
@@ -17,10 +29,20 @@
       }
 
       #feed {
+        max-height: 90dvh;
+        overflow: hidden;
         grid-column: 2 / 2;
         display: flex;
         flex-direction: column;
         gap: 1rem;
+      }
+
+      #feed-tiles {
+        height: 20dvh;
+      }
+    
+      #transportation {
+        height: 80dvh;
       }
 
       .arrival {
@@ -30,7 +52,7 @@
     </style>
   </head>
 
-  <body class="prose max-w-full">
+  <body class="prose prose-invert max-w-full">
     <header class="flex items-center justify-between px-6 py-4 border-b">
       <h1 class="text-2xl font-bold mb-0">
         {{ housing_company.name }}<br />
@@ -41,24 +63,21 @@
     <main class="px-5">
       <div
         id="residents"
-        style="
-          background-color: #f9f9f9;
-          border: 2px solid #ddd;
-          padding: 1rem;
-          border-radius: 8px;
-          box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-        "
+        class="border-2 border-gray-300 p-4 rounded-lg shadow-md"
       >
         <h2 class="mt-0">Residents</h2>
-
-        <div class="grid grid-cols-3 grid-rows-2">
+        <div class="grid grid-cols-3 grid-rows-2 gap-5">
           {% for group in residents %}
-          <div class="mb-5 p-5 border-2 border-gray-300 rounded-lg">
-            <h3 class="mt-0 mb-1">{{ group.floor }}</h3>
+          <div class="p-5 bg-black border-2 border-gray-300 rounded-lg">
+            <h3 class="mt-0 mb-1">Floor {{ group.floor }}</h3>
             <ul style="list-style-type: none; padding: 0">
               {% for resident in group.residents %}
-              <li style="padding: 0.5rem; border-bottom: 1px solid #ddd">
-                {{ resident.apartment }} - {{ resident.name }}
+              <li
+                class="grid grid-cols-4 gap-2"
+                style="padding: 0.5rem; border-bottom: 1px solid #ddd"
+              >
+                <span class="font-medium">{{ resident.apartment }}</span
+                ><span class="col-span-3">{{ resident.name }}</span>
               </li>
               {% endfor %}
             </ul>
@@ -66,64 +85,99 @@
           {% endfor %}
         </div>
       </div>
-      <div id="feed">
-        <div class="grid gap-4 grid-rows-2">
-          <div class="grid gap-4 grid-cols-2">
-            <div class="weather col-span-2">
+      <div id="feed" class="border-2 border-gray-300 p-4 rounded-lg shadow-md">
+        <div class="grid gap-4 grid-rows-1">
+          <div id="feed-tiles" class="grid gap-4 grid-cols-2 col-span-3">
+            <div class="weather">
               <h4>
                 Weather
-                <span>{{ weather.properties.meta.updated_at }}</span>
+                <span class="block text-xl text-gray-400">{{ weather.properties.meta.updated_at }}</span>
               </h4>
               <div class="flex flex-col">
                 <!-- forecast description-->
                 {% match weather.properties.timeseries[0].data.next_1_hours %}
-                  {% when Some with (forecast) %}
-                  <p class="font-bold uppercase">{{ forecast.summary.symbol_code }}</p>
-                  {% when None %}
-                {% endmatch %}
+                {% when Some with (forecast) %}
+                <p class="font-bold uppercase">
+                  {{ forecast.summary.symbol_code }}
+                </p>
+                {% when None %} {% endmatch %}
                 <!-- forecast values (datalist) -->
-                <dl class="mt-5">
+                <dl class="m-0">
+                  <!-- relative humidity -->
+                  {% match weather.properties.timeseries[0].data.instant.details.relative_humidity %}
+                  {% when Some with (relative_humidity) %}
+                  <div class="grid grid-cols-4">
+                    <dt
+                      class="text-sm uppercase font-medium leading-6 self-center mt-0"
+                    >
+                      Humidity
+                    </dt>
+                    <dd class="mt-1 text-sm leading-6">
+                      {{ relative_humidity }} {{
+                      weather.properties.meta.units.relative_humidity }}
+                    </dd>
+                  </div>
+                  {% when None %} 
+                  {% endmatch %} 
+                  <!-- air temp in celsius -->
                   {% match weather.properties.timeseries[0].data.instant.details.air_temperature %}
-                    {% when Some with (air_temperature) %}
-                    <div class="grid grid-cols-4">
-                      <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">Temperature</dt>
-                      <dd class="mt-1 text-sm leading-6">{{ air_temperature }} {{ weather.properties.meta.units.air_temperature }}</dd>
-                    </div>
-                    {% when None %}
-                  {% endmatch %}
-                  {% match weather.properties.timeseries[0].data.instant.details.wind_speed %}
+                  {% when Some with (air_temperature) %}
+                  <div class="grid grid-cols-4">
+                    <dt
+                      class="text-sm uppercase font-medium leading-6 self-center mt-0"
+                    >
+                      Temperature
+                    </dt>
+                    <dd class="mt-1 text-sm leading-6">
+                      {{ air_temperature }} {{
+                      weather.properties.meta.units.air_temperature }}
+                    </dd>
+                  </div>
+                  {% when None %} 
+                  {% endmatch %} 
+                  <!-- wind speed in m/s -->
+                  {% match weather.properties.timeseries[0].data.instant.details.wind_speed %} 
                   {% when Some with (wind_speed) %}
                   <div class="grid grid-cols-4">
-                    <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">Wind</dt>
-                    <dd class="mt-1 text-sm leading-6">{{ wind_speed }} {{ weather.properties.meta.units.wind_speed }}</dd>
+                    <dt
+                      class="text-sm uppercase font-medium leading-6 self-center mt-0"
+                    >
+                      Wind
+                    </dt>
+                    <dd class="mt-1 text-sm leading-6">
+                      {{ wind_speed }} {{
+                      weather.properties.meta.units.wind_speed }}
+                    </dd>
                   </div>
                   {% when None %}
-                {% endmatch %}
+                  {% endmatch %}
                 </dl>
               </div>
             </div>
             <div class="news">
-              <h4>News</h4>
-              <p>Placeholder</p>
+              <h4>
+                News
+                <span class="block text-xl text-gray-400">What is going on in the area</span>
+              </h4>
             </div>
           </div>
-
-          <div class="transportation">
+          <div id="transportation" class="col-span-3">
             <h4>
-              Real-time Transportation<br />
-              <span>Nearest public transport options </span>
+              Real-time Transportation
+              <span class="block text-xl text-gray-400">Nearest public transport options</span>
             </h4>
-            <div class="max-h-96 overflow-y-scroll">
+            <div class="max-h-[55dvh] overflow-y-scroll">
               {% for arrival in next_arrivals %}
-              <p class="inline-flex">
-                {{ arrival.headsign }} ({{ arrival.route_short_name }})
-              </p>
-
-              <span
-                class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
-              >
-                {{ arrival.arrival }}
-              </span>
+              <div class="grid grid-cols-2 p-2 my-2 border border-gray-50 gap-2 rounded-lg">
+                <p class="m-0">
+                  {{ arrival.headsign }} ({{ arrival.route_short_name }})
+                </p>
+                <span
+                  class="items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 justify-self-end"
+                >
+                  {{ arrival.arrival }}
+                </span>
+              </div>
 
               {% endfor %}
             </div>
