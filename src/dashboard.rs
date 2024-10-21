@@ -27,7 +27,7 @@ pub async fn dashboard() -> impl IntoResponse {
         },
         next_arrivals,
         residents,
-        weather
+        weather,
     };
 
     println!("Props: {:?}", template);
