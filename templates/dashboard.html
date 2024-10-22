@@ -3,7 +3,8 @@
   <head>
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <meta charset="UTF-8" />
-    <title>Dashboard</title>
+    <meta http-equiv="refresh" content="60">
+    <title>{{ housing_company.name }} Dashboard</title>
     <style>
       body {
         max-height: 100dvh;
@@ -208,7 +209,7 @@
               Real-time Transportation
               <span class="block text-xl text-gray-400">Nearest public transport options</span>
             </h4>
-            <div class="max-h-[55dvh] overflow-y-scroll rounded-lg border border-gray-600 p-5">
+            <div class="max-h-[55dvh] overflow-y-auto rounded-lg border border-gray-600 p-5">
               {% for next in next_arrivals %}
               <div class="grid grid-cols-12 p-2 my-2 border border-gray-600 gap-2 rounded-lg">
                 <div class="inline-flex items-center justify-center">
