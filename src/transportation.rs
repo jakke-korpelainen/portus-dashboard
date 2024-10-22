@@ -115,7 +115,6 @@ fn query_stops_by_radius_query(start_time: i64, time_range: Option<i64>) -> Stri
     query
 }
 
-
 fn format_minutes_diff_from_now(seconds_since_midnight: i64) -> String {
     // Get the current time in seconds since midnight in Helsinki time
     let now = chrono::Local::now();
@@ -173,7 +172,9 @@ pub async fn get_next_arrivals() -> Result<Vec<Arrivals>, Box<dyn Error>> {
             "digitransit-subscription-key",
             &CONFIG.digitransit_subscription_key,
         )
-        .json(&serde_json::json!({ "query": query_stops_by_radius_query(unix_in_two_minutes, None) }));
+        .json(
+            &serde_json::json!({ "query": query_stops_by_radius_query(unix_in_two_minutes, None) }),
+        );
 
     println!("{request:#?}");
 

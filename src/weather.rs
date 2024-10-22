@@ -1,5 +1,5 @@
-use std::error::Error;
 use serde::{Deserialize, Serialize};
+use std::error::Error;
 
 const API_CALL: &str =
     "https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=60.188374&lon=24.984065";
@@ -42,7 +42,7 @@ pub struct Units {
     pub wind_speed: String,
     pub wind_speed_of_gust: String,
     pub wind_speed_percentile_10: String,
-    pub wind_speed_percentile_90: String
+    pub wind_speed_percentile_90: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -113,8 +113,8 @@ pub struct Details {
     pub probability_of_thunder: Option<f64>,
 }
 
-pub const EMPTY_WEATHER_DATA: WeatherData = WeatherData { 
-    r#type: String::new(), 
+pub const EMPTY_WEATHER_DATA: WeatherData = WeatherData {
+    r#type: String::new(),
     properties: Properties {
         meta: Meta {
             updated_at: String::new(),
@@ -127,7 +127,7 @@ pub const EMPTY_WEATHER_DATA: WeatherData = WeatherData {
                 air_temperature_percentile_90: String::new(),
                 cloud_area_fraction: String::new(),
                 cloud_area_fraction_high: String::new(),
-                cloud_area_fraction_low:String::new(),
+                cloud_area_fraction_low: String::new(),
                 cloud_area_fraction_medium: String::new(),
                 dew_point_temperature: String::new(),
                 precipitation_amount: String::new(),
@@ -144,13 +144,13 @@ pub const EMPTY_WEATHER_DATA: WeatherData = WeatherData {
                 wind_speed_percentile_10: String::new(),
                 wind_speed_percentile_90: String::new(),
             },
-        }, 
-        timeseries: vec![]
-    }, 
+        },
+        timeseries: vec![],
+    },
     geometry: Geometry {
         coordinates: vec![],
         r#type: String::new(),
-    }
+    },
 };
 
 pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
