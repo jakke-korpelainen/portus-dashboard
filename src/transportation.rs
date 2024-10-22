@@ -165,6 +165,7 @@ fn parse_times_to_arrivals(data: Data) -> Vec<Arrivals> {
 pub async fn get_next_arrivals() -> Result<Vec<Arrivals>, Box<dyn Error>> {
     let unix_now = chrono::Utc::now().timestamp();
     let unix_in_two_minutes = unix_now + TWO_MINUTES;
+
     let client = reqwest::Client::new();
     let request = client
         .post("https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql")
@@ -176,28 +177,20 @@ pub async fn get_next_arrivals() -> Result<Vec<Arrivals>, Box<dyn Error>> {
             &serde_json::json!({ "query": query_stops_by_radius_query(unix_in_two_minutes, None) }),
         );
 
-    println!("{request:#?}");
-
     let response = match request.send().await {
-        Ok(response) => {
-            println!("{response:#?}");
-            response
-        }
+        Ok(response) => response,
         Err(err) => {
-            println!("Error: {:?}", err);
+            println!("Error in request: {:?}", err);
             return Err(Box::new(err));
         }
     };
 
     // first get text, easier to debug if something goes wrong
-    let text = response.text().await.unwrap();
+    let response_text = response.text().await.unwrap();
 
     // parse text into JSON
-    let json_text: serde_json::Value = match serde_json::from_str(&text) {
-        Ok(json) => {
-            println!("{json:#?}");
-            json
-        }
+    let response_json: serde_json::Value = match serde_json::from_str(&response_text) {
+        Ok(json) => json,
         Err(err) => {
             println!("Error parsing JSON: {:?}", err);
             return Err(Box::new(err));
@@ -205,15 +198,14 @@ pub async fn get_next_arrivals() -> Result<Vec<Arrivals>, Box<dyn Error>> {
     };
 
     // parse JSON into ApiResponse struct
-    let json: ApiResponse = match serde_json::from_value(json_text) {
-        Ok(json_response) => json_response,
+    let data: ApiResponse = match serde_json::from_value(response_json) {
+        Ok(data) => data,
         Err(err) => {
             println!("Error converting JSON to ApiResponse: {:?}", err);
             return Err(Box::new(err));
         }
     };
 
-    let arrivals = parse_times_to_arrivals(json.data);
-
+    let arrivals = parse_times_to_arrivals(data.data);
     Ok(arrivals)
 }

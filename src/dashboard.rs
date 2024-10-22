@@ -20,7 +20,7 @@ pub async fn dashboard() -> impl IntoResponse {
         let weather = match get_weather_data().await {
             Ok(data) => data,
             Err(e) => {
-                println!("Error: {:?}", e);
+                println!("Error in weather: {:?}", e);
                 EMPTY_WEATHER_DATA
             }
         };
@@ -32,7 +32,7 @@ pub async fn dashboard() -> impl IntoResponse {
         let next_arrivals = match transportation::get_next_arrivals().await {
             Ok(data) => data,
             Err(e) => {
-                println!("Error: {:?}", e);
+                println!("Error in arrivals: {:?}", e);
                 vec![]
             }
         };
@@ -51,21 +51,21 @@ pub async fn dashboard() -> impl IntoResponse {
         next_arrivals: match next_arrivals {
             Ok(data) => data,
             Err(e) => {
-                println!("Error: {:?}", e);
+                println!("Error joining: {:?}", e);
                 vec![]
             }
         },
         residents: match residents {
             Ok(data) => data,
             Err(e) => {
-                println!("Error: {:?}", e);
+                println!("Error joining: {:?}", e);
                 vec![]
             }
         },
         weather: match weather {
             Ok(data) => data,
             Err(e) => {
-                println!("Error: {:?}", e);
+                println!("Error joining: {:?}", e);
                 EMPTY_WEATHER_DATA
             }
         },

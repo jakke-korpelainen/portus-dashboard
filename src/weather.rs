@@ -1,9 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-const API_CALL: &str =
-    "https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=60.188374&lon=24.984065";
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Geometry {
     pub r#type: String,
@@ -155,12 +152,12 @@ pub const EMPTY_WEATHER_DATA: WeatherData = WeatherData {
 
 pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
     let client = reqwest::Client::new();
-    let request = client.get(API_CALL).header("User-Agent", "reqwest");
+    let request = client
+        .get("https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=60.188374&lon=24.984065")
+        .header("User-Agent", "reqwest");
 
     let response = match request.send().await {
-        Ok(response) => {
-            response
-        }
+        Ok(response) => response,
         Err(err) => {
             println!("Error: {:?}", err);
             return Err(Box::new(err));
@@ -168,13 +165,11 @@ pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
     };
 
     // first get text, easier to debug if something goes wrong
-    let text = response.text().await.unwrap();
+    let response_text = response.text().await.unwrap();
 
     // parse text into JSON
-    let json_text: serde_json::Value = match serde_json::from_str(&text) {
-        Ok(json) => {
-            json
-        }
+    let response_json: serde_json::Value = match serde_json::from_str(&response_text) {
+        Ok(json) => json,
         Err(err) => {
             println!("Error parsing JSON: {:?}", err);
             return Err(Box::new(err));
@@ -182,7 +177,7 @@ pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
     };
 
     // parse JSON into WeatherData struct
-    let data: WeatherData = match serde_json::from_value(json_text) {
+    let data: WeatherData = match serde_json::from_value(response_json) {
         Ok(data) => data,
         Err(err) => {
             println!("Error converting JSON to WeatherData: {:?}", err);

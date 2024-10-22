@@ -7,10 +7,7 @@ pub struct Config {
 
 pub fn get_env_value(env_name: &str) -> String {
     let env_value = match env::var(env_name) {
-        Ok(val) => {
-            println!("{env_name}: {val:?}");
-            val
-        }
+        Ok(val) => val,
         Err(e) => {
             println!("couldn't interpret {env_name}: {e}");
             "".to_string()
