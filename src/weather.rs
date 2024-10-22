@@ -157,11 +157,8 @@ pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
     let client = reqwest::Client::new();
     let request = client.get(API_CALL).header("User-Agent", "reqwest");
 
-    println!("{request:#?}");
-
     let response = match request.send().await {
         Ok(response) => {
-            println!("{response:#?}");
             response
         }
         Err(err) => {
@@ -176,7 +173,6 @@ pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
     // parse text into JSON
     let json_text: serde_json::Value = match serde_json::from_str(&text) {
         Ok(json) => {
-            println!("{json:#?}");
             json
         }
         Err(err) => {
@@ -187,7 +183,7 @@ pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
 
     // parse JSON into WeatherData struct
     let data: WeatherData = match serde_json::from_value(json_text) {
-        Ok(json_response) => json_response,
+        Ok(data) => data,
         Err(err) => {
             println!("Error converting JSON to WeatherData: {:?}", err);
             return Err(Box::new(err));
