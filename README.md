@@ -6,7 +6,7 @@ A simple dashboard prototype for a housing company. The dashboard will eventuall
 
 Aiming to run this on raspberry with a small screen in the lobby.
 
-![Screenshot](screenshot.png)
+![Dashboard Screenshot](screenshot.png)
 
 **Rust key dependencies**
 
@@ -25,12 +25,16 @@ Looking into where I could find this up-to-date.
 
 ### Weather from yr.no
 
+![Weather Screenshot](weather.png)
+
 Yr.no provides a free modern weather API that serves JSON.
 
 - [API documentation](https://api.met.no/weatherapi/locationforecast/2.0/documentation)
 - [Example request](https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=60.188374&lon=24.984065)
 
 ### Transport data from Digitransit.fi
+
+![Transportation Screenshot](transportation.png)
 
 Digitransit provides a free API for transport data in Finland.
 

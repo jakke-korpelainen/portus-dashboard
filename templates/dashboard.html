@@ -37,14 +37,6 @@
         gap: 1rem;
       }
 
-      #feed-tiles {
-        height: 20dvh;
-      }
-    
-      #transportation {
-        height: 80dvh;
-      }
-
       .arrival {
         border: 1px solid #ccc;
         padding: 1rem;
@@ -56,7 +48,7 @@
     <header class="flex items-center justify-between px-6 py-4 border-b-2 border-gray-500">
       <h1 class="text-2xl font-bold mb-0">
         {{ housing_company.name }}<br />
-        <span class="text-lg"> {{ housing_company.address }} </span>
+        <span class="text-lg">{{ housing_company.address }}</span>
       </h1>
     </header>
 
@@ -85,79 +77,130 @@
         </div>
       </div>
       <div id="feed" class="border-2 border-gray-500 p-4 rounded-lg shadow-md">
-        <div class="grid gap-4 grid-rows-1">
-          <div id="feed-tiles" class="grid gap-4 grid-cols-2 col-span-3">
-            <div class="weather">
+        <div class="flex flex-col justify-between h-full">
+          <div id="feed-tiles" class="grid gap-4 grid-cols-5">
+            <div class="weather col-span-3">
               <h4>
                 Weather
                 <span class="block text-xl text-gray-400">{{ weather.properties.meta.updated_at }}</span>
               </h4>
               <div class="flex flex-col">
-                <!-- forecast description-->
-                {% match weather.properties.timeseries[0].data.next_1_hours %}
-                {% when Some with (forecast) %}
-                <p class="font-bold uppercase">
-                  {{ forecast.summary.symbol_code }}
-                </p>
-                {% when None %} {% endmatch %}
-                <!-- forecast values (datalist) -->
-                <dl class="m-0">
-                  <!-- relative humidity -->
-                  {% match weather.properties.timeseries[0].data.instant.details.relative_humidity %}
-                  {% when Some with (relative_humidity) %}
-                  <div class="grid grid-cols-4">
-                    <dt
-                      class="text-sm uppercase font-medium leading-6 self-center mt-0"
-                    >
-                      Humidity
-                    </dt>
-                    <dd class="mt-1 text-sm leading-6">
-                      {{ relative_humidity }} {{
-                      weather.properties.meta.units.relative_humidity }}
-                    </dd>
+                <div class="grid grid-cols-2 divide-x">
+                  <div>
+                    <p class="font-bold">Now</p>
+                    <!-- instant forecast -->
+                    <dl class="m-0">
+                      <!-- relative humidity -->
+                      {% match weather.properties.timeseries[0].data.instant.details.relative_humidity %}
+                      {% when Some with (relative_humidity) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Humidity
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ relative_humidity }} {{ weather.properties.meta.units.relative_humidity }}
+                          </dd>
+                        </div>
+                      {% when None %} 
+                      {% endmatch %}
+
+                      <!-- air temp in celsius -->
+                      {% match weather.properties.timeseries[0].data.instant.details.air_temperature %}
+                      {% when Some with (air_temperature) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Temperature
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ air_temperature }} 
+                            {{ weather.properties.meta.units.air_temperature }}
+                          </dd>
+                        </div>
+                      {% when None %} 
+                      {% endmatch %} 
+                      <!-- wind speed in m/s -->
+                      {% match weather.properties.timeseries[0].data.instant.details.wind_speed %} 
+                      {% when Some with (wind_speed) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Wind
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ wind_speed }} 
+                            {{ weather.properties.meta.units.wind_speed }}
+                          </dd>
+                        </div>
+                      {% when None %}
+                      {% endmatch %}
+                    </dl>
                   </div>
-                  {% when None %} 
-                  {% endmatch %} 
-                  <!-- air temp in celsius -->
-                  {% match weather.properties.timeseries[0].data.instant.details.air_temperature %}
-                  {% when Some with (air_temperature) %}
-                  <div class="grid grid-cols-4">
-                    <dt
-                      class="text-sm uppercase font-medium leading-6 self-center mt-0"
-                    >
-                      Temperature
-                    </dt>
-                    <dd class="mt-1 text-sm leading-6">
-                      {{ air_temperature }} {{
-                      weather.properties.meta.units.air_temperature }}
-                    </dd>
+                  <div class="pl-5">
+                    <!-- 1 hour forecast -->
+                    <p class="font-bold">Next 1 hour</p>
+
+                    <dl class="m-0">
+                      {% match weather.properties.timeseries[0].data.next_1_hours %}
+                      {% when Some with (forecast) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Description
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ forecast.summary.symbol_code }}
+                          </dd>
+                        </div>
+                        <!-- chance of rain -->
+                        {% match forecast.details.probability_of_precipitation %}
+                        {% when Some with (probability_of_precipitation) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Chance of Rain
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ probability_of_precipitation }} {{ weather.properties.meta.units.probability_of_precipitation }}
+                          </dd>
+                        </div>
+                        {% when None %} 
+                        {% endmatch %}
+                        <!-- chance of thunder -->
+                        {% match forecast.details.probability_of_thunder %}
+                        {% when Some with (probability_of_thunder) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Chance of Thunder
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ probability_of_thunder }} {{ weather.properties.meta.units.probability_of_thunder }}
+                          </dd>
+                        </div>
+                        {% when None %} 
+                        {% endmatch %}
+                      {% when None %} 
+                      {% endmatch %}
+                    </dl>
                   </div>
-                  {% when None %} 
-                  {% endmatch %} 
-                  <!-- wind speed in m/s -->
-                  {% match weather.properties.timeseries[0].data.instant.details.wind_speed %} 
-                  {% when Some with (wind_speed) %}
-                  <div class="grid grid-cols-4">
-                    <dt
-                      class="text-sm uppercase font-medium leading-6 self-center mt-0"
-                    >
-                      Wind
-                    </dt>
-                    <dd class="mt-1 text-sm leading-6">
-                      {{ wind_speed }} {{
-                      weather.properties.meta.units.wind_speed }}
-                    </dd>
-                  </div>
-                  {% when None %}
-                  {% endmatch %}
-                </dl>
+                </div>
               </div>
             </div>
-            <div class="news">
+            <div class="news col-span-2">
               <h4>
                 News
                 <span class="block text-xl text-gray-400">What is going on in the building and area</span>
               </h4>
+              <ul class="list-disc mt-5 pl-5 space-y-2">
+                <li class="text-sm">
+                  <span class="font-bold">Maintenance:</span> The elevator will be out of service on Monday for maintenance.
+                </li>
+                <li class="text-sm">
+                  <span class="font-bold">Community Meeting:</span> Join us for a community meeting in the lobby on Wednesday at 6 PM.
+                </li>
+                <li class="text-sm">
+                  <span class="font-bold">New Cafe:</span> A new cafe has opened around the corner, offering a 10% discount for residents.
+                </li>
+                <li class="text-sm">
+                  <span class="font-bold">Recycling:</span> Please remember to sort your recyclables properly. New bins are available in the basement.
+                </li>
+              </ul>
             </div>
           </div>
           <div id="transportation" class="col-span-3">
@@ -166,18 +209,25 @@
               <span class="block text-xl text-gray-400">Nearest public transport options</span>
             </h4>
             <div class="max-h-[55dvh] overflow-y-scroll rounded-lg border border-gray-600 p-5">
-              {% for arrival in next_arrivals %}
-              <div class="grid grid-cols-2 p-2 my-2 border border-gray-600 gap-2 rounded-lg">
-                <p class="m-0">
-                  <span class="font-mono font-medium text-sm uppercase">{{ arrival.headsign }} ({{ arrival.route_short_name }})</span>
-                </p>
-                <span
-                  class="items-center rounded-md bg-black px-2 py-1 text-xs font-medium text-white justify-self-end"
-                >
-                  {{ arrival.arrival }}
+              {% for next in next_arrivals %}
+              <div class="grid grid-cols-12 p-2 my-2 border border-gray-600 gap-2 rounded-lg">
+                <div class="inline-flex items-center justify-center">
+                  <span class="text-xl font-mono font-bold">{{ next.route_short_name }}</span>
+                </div>
+                <div class="gap-2 col-span-8">
+                  <div class="inline-flex gap-5 items-center">
+                    <span>{{ next.stop_name }}</span>
+                    <span>{{ next.stop_desc }}</span>
+                    <span class="text-sm text-gray-400">({{ next.gtfs_id }})</span>
+                  </div>
+                  <div>
+                    <span class="font-mono font-medium text-sm uppercase">ON ROUTE: {{ next.headsign }}</span>
+                  </div>
+                </div>
+                <span class="col-span-3 tracking-widest font-mono font-medium uppercase items-center rounded-md bg-gray-600 p-2 text-sm font-medium text-white justify-self-end self-center">
+                  {{ next.realtime_text }}
                 </span>
               </div>
-
               {% endfor %}
             </div>
           </div>
