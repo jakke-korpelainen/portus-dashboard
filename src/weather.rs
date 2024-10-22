@@ -1,6 +1,4 @@
 use std::error::Error;
-
-use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
 const API_CALL: &str =
@@ -14,15 +12,17 @@ pub struct Geometry {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct WeatherData {
-    r#type: String,
-    geometry: Geometry,
+    pub r#type: String,
+    pub geometry: Geometry,
     pub properties: Properties,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Units {
-    pub air_temperature: String,
     pub air_pressure_at_sea_level: String,
+    pub air_temperature: String,
+    pub air_temperature_max: String,
+    pub air_temperature_min: String,
     pub air_temperature_percentile_10: String,
     pub air_temperature_percentile_90: String,
     pub cloud_area_fraction: String,
@@ -31,13 +31,18 @@ pub struct Units {
     pub cloud_area_fraction_medium: String,
     pub dew_point_temperature: String,
     pub fog_area_fraction: String,
+    pub precipitation_amount: String,
+    pub precipitation_amount_max: String,
+    pub precipitation_amount_min: String,
+    pub probability_of_precipitation: String,
+    pub probability_of_thunder: String,
     pub relative_humidity: String,
     pub ultraviolet_index_clear_sky: String,
     pub wind_from_direction: String,
     pub wind_speed: String,
     pub wind_speed_of_gust: String,
     pub wind_speed_percentile_10: String,
-    pub wind_speed_percentile_90: String,
+    pub wind_speed_percentile_90: String
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -65,7 +70,7 @@ pub struct Summary {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct NextHours {
+pub struct Forecast {
     pub summary: Summary,
     pub details: Details,
 }
@@ -73,8 +78,8 @@ pub struct NextHours {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Data {
     pub instant: Instant,
-    pub next_1_hours: Option<NextHours>,
-    pub next_6_hours: Option<NextHours>,
+    pub next_1_hours: Option<Forecast>,
+    pub next_6_hours: Option<Forecast>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -101,10 +106,55 @@ pub struct Details {
     pub wind_speed_of_gust: Option<f64>,
     pub wind_speed_percentile_10: Option<f64>,
     pub wind_speed_percentile_90: Option<f64>,
+    pub precipitation_amount: Option<f64>,
+    pub precipitation_amount_max: Option<f64>,
+    pub precipitation_amount_min: Option<f64>,
+    pub probability_of_precipitation: Option<f64>,
+    pub probability_of_thunder: Option<f64>,
 }
 
+pub const EMPTY_WEATHER_DATA: WeatherData = WeatherData { 
+    r#type: String::new(), 
+    properties: Properties {
+        meta: Meta {
+            updated_at: String::new(),
+            units: Units {
+                air_temperature: String::new(),
+                air_temperature_max: String::new(),
+                air_temperature_min: String::new(),
+                air_pressure_at_sea_level: String::new(),
+                air_temperature_percentile_10: String::new(),
+                air_temperature_percentile_90: String::new(),
+                cloud_area_fraction: String::new(),
+                cloud_area_fraction_high: String::new(),
+                cloud_area_fraction_low:String::new(),
+                cloud_area_fraction_medium: String::new(),
+                dew_point_temperature: String::new(),
+                precipitation_amount: String::new(),
+                precipitation_amount_max: String::new(),
+                precipitation_amount_min: String::new(),
+                probability_of_precipitation: String::new(),
+                probability_of_thunder: String::new(),
+                fog_area_fraction: String::new(),
+                relative_humidity: String::new(),
+                ultraviolet_index_clear_sky: String::new(),
+                wind_from_direction: String::new(),
+                wind_speed: String::new(),
+                wind_speed_of_gust: String::new(),
+                wind_speed_percentile_10: String::new(),
+                wind_speed_percentile_90: String::new(),
+            },
+        }, 
+        timeseries: vec![]
+    }, 
+    geometry: Geometry {
+        coordinates: vec![],
+        r#type: String::new(),
+    }
+};
+
 pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
-    let client = Client::new();
+    let client = reqwest::Client::new();
     let request = client.get(API_CALL).header("User-Agent", "reqwest");
 
     println!("{request:#?}");
