@@ -7,6 +7,7 @@ use std::error::Error;
 pub struct Route {
     #[serde(rename = "shortName")]
     short_name: String,
+    mode: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -74,13 +75,14 @@ pub struct Arrivals {
     pub headsign: String,
     pub realtime_arrival: i64,
     pub realtime_text: String,
+    pub mode: String,
 }
 
 const TWO_MINUTES: i64 = 120;
-const TEN_MINUTES: i64 = 600;
+const FIFTEEN_MINUTES: i64 = 900;
 
 fn query_stops_by_radius_query(start_time: i64, time_range: Option<i64>) -> String {
-    let time_range = time_range.unwrap_or(TEN_MINUTES);
+    let time_range = time_range.unwrap_or(FIFTEEN_MINUTES);
     let query = format!(
         r#"{{
         stopsByRadius(lat:60.188374, lon:24.984065, radius:750) {{
@@ -92,13 +94,14 @@ fn query_stops_by_radius_query(start_time: i64, time_range: Option<i64>) -> Stri
                         name
                         desc
 
-                        stoptimesWithoutPatterns(numberOfDepartures: 10, startTime: {start_time}, timeRange: {time_range} ) {{
+                        stoptimesWithoutPatterns(numberOfDepartures: 1, startTime: {start_time}, timeRange: {time_range} ) {{
                             scheduledArrival
                             scheduledDeparture
                             realtimeArrival
                             trip {{
                                 route {{
                                     shortName
+                                    mode
                                 }}
                             }}
                             headsign
@@ -146,12 +149,13 @@ fn parse_times_to_arrivals(data: Data) -> Vec<Arrivals> {
                 stop_desc: edge.node.stop.desc.to_string(),
                 stop_name: edge.node.stop.name.to_string(),
                 route_short_name: stop_time.trip.route.short_name.to_string(),
+                mode: stop_time.trip.route.mode.to_lowercase().to_string(),
                 headsign: match stop_time.headsign {
                     Some(headsign) => headsign,
                     None => "".to_string(),
                 },
                 realtime_arrival: stop_time.realtime_arrival,
-                realtime_text: realtime_text,
+                realtime_text,
             };
 
             arrivals.push(item);
