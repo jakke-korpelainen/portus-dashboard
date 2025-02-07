@@ -1,13 +1,12 @@
 #[derive(Clone, Debug)]
 pub struct NewsItem {
-  pub heading: String,
-  pub content: String,
-  pub of_type: String
+    pub heading: String,
+    pub content: String,
+    pub of_type: String,
 }
 
 pub async fn load_news() -> Vec<NewsItem> {
-
-  let news: &[NewsItem] = &[
+    let news: &[NewsItem] = &[
     NewsItem {
       heading: String::from("News Heading 1"),
       content: String::from("This is the **content** of the first news item."),
@@ -25,5 +24,5 @@ pub async fn load_news() -> Vec<NewsItem> {
     },
   ];
 
-  news.to_vec()
+    news.to_vec()
 }
