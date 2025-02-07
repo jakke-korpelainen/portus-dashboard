@@ -23,6 +23,11 @@ askama, axum, reqwest, serde, serde_json, tokio
 
 Looking into where I could find this up-to-date.
 
+### News
+![News Screenshot](news.png)
+
+Placeholder news segment. Requires an integration to be written to some preferred news source.
+
 ### Weather from yr.no
 
 ![Weather Screenshot](weather.png)

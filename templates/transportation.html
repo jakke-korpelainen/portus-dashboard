@@ -1,0 +1,37 @@
+<!-- Transportation Section -->
+<div class="border-2 border-gray-400 rounded-lg shadow-md bg-white">
+  <div class="p-4">
+    <div class="flex items-center gap-5">
+      <img src="public/hsl.svg" alt="HSL Logo" class="w-auto h-14">
+      <h3 class="m-0 text-black">
+        Real-time Transportation
+        <span class="block text-xl text-gray-400">Next upcoming</span>
+      </h3>
+    </div>
+  </div>
+  <div class="p-4">
+    {% for next in next_arrivals %}
+      <div class="grid grid-cols-12 p-2 my-2 gap-2 rounded-lg relative bg-[#bee4f8] text-[#007ac9]">
+        <div class="col-span-2 gap-2 flex items-center justify-center">
+          <img class="w-8 h-8" src="public/{{ next.mode }}.svg"/>
+          <span class="text-2xl font-mono font-bold tracking-widest">{{ next.route_short_name }}</span>
+        </div>
+        <div class="gap-2 col-span-6">
+          <div class="flex justify-between gap-5 items-center">
+            <span>{{ next.stop_name }}</span>
+            <span class="absolute right-2 top-2 font-mono text-sm text-xs">{{ next.gtfs_id }}</span>
+          </div>
+          <div>
+            <span class="font-sans text-sm">{{ next.headsign }}</span>
+          </div>
+          <div>
+            <span class="font-sans text-sm">{{ next.stop_desc }}</span>
+          </div>
+        </div>
+        <span class="col-span-4 font-medium items-center rounded-md bg-[#007ac9] p-2 text-[#ffffff] justify-self-end self-end">                  
+          {{ next.realtime_text }}
+        </span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
