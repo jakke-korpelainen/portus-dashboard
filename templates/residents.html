@@ -2,15 +2,14 @@
   id="residents"
   class="grid grid-cols-1 gap-4 h-full"
 >
-  <!-- <h2 class="m-0 text-black">Residents</h2> -->
   {% for group in residents %}
-  <div class="p-5 bg-black rounded-lg flex-grow">
-    <h3 class="mt-0 mb-5">Floor {{ group.floor }}</h3>
+  <div class="p-5 bg-black rounded-lg flex-grow bg-repeat" style="background-image: url('/public/panel.png');">
+    <h3 class="text-2xl text-center text-white mt-0 mb-7">{{ group.floor }}</h3>
     <ul class="m-0 list-none p-0 grid grid-cols-2 gap-2">
       {% for resident in group.residents %}
-      <li class="m-0 grid grid-cols-4 gap-2 p-2 border-b border-gray-600 min-h-[4rem] items-center">
-        <span class="text-xl font-bold font-mono">{{ resident.apartment }}</span>
-        <span class="text-xl col-span-3 font-mono tracking-widest leading-tight">{{ resident.name }}</span>
+      <li class="m-0 grid grid-cols-4 gap-2 p-2 min-h-[2rem] items-center">
+        <span class="text-2xl text-white font-bold font-mono shadow-md">{{ resident.apartment }}</span>
+        <span class="text-2xl text-white col-span-3 font-bold font-mono tracking-widest leading-tight shadow-md">{{ resident.name }}</span>
       </li>
       {% endfor %}
     </ul>
