@@ -28,7 +28,6 @@ pub struct HousingCompany {
     pub address: String,
 }
 
-
 mod filters {
 
     const FINNISH_TIMEZONE: chrono::FixedOffset = chrono::FixedOffset::east_opt(2 * 3600).unwrap(); // UTC+2
@@ -38,7 +37,7 @@ mod filters {
         if value.to_string().is_empty() {
             return Ok(value.to_string());
         }
-        
+
         let value = value.to_string().parse::<f64>();
         let rounded_value = value.unwrap().round();
         Ok(rounded_value.to_string())
@@ -88,7 +87,7 @@ mod filters {
             "snowandthunder" => "Snow and thunder",
             "snowshowers" => "Snow showers",
             "snowshowersandthunder" => "Snow showers and thunder",
-            _ => "Unknown weather"
+            _ => "Unknown weather",
         };
         Ok(description.to_string())
     }
@@ -103,11 +102,10 @@ mod filters {
             Ok(datetime) => datetime,
             Err(err) => {
                 println!("Error parsing updated_at: {:?}", err);
-                return Ok("".to_string())
+                return Ok("".to_string());
             }
         };
 
-    
         // Convert the updated_at field to Finnish timezone
         let updated_at_finnish = updated_at.with_timezone(&FINNISH_TIMEZONE);
         Ok(updated_at_finnish.format("%d.%m.%Y %H:%M:%S").to_string())
@@ -121,7 +119,7 @@ pub struct DashboardTemplate {
     pub next_arrivals: Vec<Arrivals>,
     pub residents: Vec<Residents>,
     pub weather: WeatherData,
-    pub news: Vec<NewsItem>
+    pub news: Vec<NewsItem>,
 }
 
 #[cfg(test)]
@@ -133,16 +131,20 @@ mod tests {
     struct RoundingTemplate<'value> {
         test_value: &'value str,
     }
-    
+
     #[test]
     fn test_round_template_specimen_1() {
-        let t = RoundingTemplate { test_value: "50.12" };
+        let t = RoundingTemplate {
+            test_value: "50.12",
+        };
         assert_eq!(t.render().unwrap(), "50");
     }
 
     #[test]
     fn test_round_template_specimen_2() {
-        let t = RoundingTemplate { test_value: "50.12345" };
+        let t = RoundingTemplate {
+            test_value: "50.12345",
+        };
         assert_eq!(t.render().unwrap(), "50");
     }
 
@@ -159,13 +161,17 @@ mod tests {
 
     #[test]
     fn test_iso_to_fi_template_valid_date() {
-        let t = IsoToFiTemplate { test_value: "2023-10-05T14:48:00.000Z" };
+        let t = IsoToFiTemplate {
+            test_value: "2023-10-05T14:48:00.000Z",
+        };
         assert_eq!(t.render().unwrap(), "05.10.2023 16:48:00");
     }
 
     #[test]
     fn test_iso_to_fi_template_invalid_date() {
-        let t = IsoToFiTemplate { test_value: "invalid-date" };
+        let t = IsoToFiTemplate {
+            test_value: "invalid-date",
+        };
         assert_eq!(t.render().unwrap(), "");
     }
 
@@ -183,25 +189,33 @@ mod tests {
 
     #[test]
     fn test_symbol_code_template_clear_sky() {
-        let t = SymbolCodeTemplate { test_value: "clear_sky" };
+        let t = SymbolCodeTemplate {
+            test_value: "clear_sky",
+        };
         assert_eq!(t.render().unwrap(), "Clear sky");
     }
 
     #[test]
     fn test_symbol_code_template_heavyrain() {
-        let t = SymbolCodeTemplate { test_value: "heavyrain" };
+        let t = SymbolCodeTemplate {
+            test_value: "heavyrain",
+        };
         assert_eq!(t.render().unwrap(), "Heavy rain");
     }
 
     #[test]
     fn test_symbol_code_template_partlycloudy() {
-        let t = SymbolCodeTemplate { test_value: "partlycloudy" };
+        let t = SymbolCodeTemplate {
+            test_value: "partlycloudy",
+        };
         assert_eq!(t.render().unwrap(), "Partly cloudy");
     }
 
     #[test]
     fn test_symbol_code_template_unknown() {
-        let t = SymbolCodeTemplate { test_value: "unknown_code" };
+        let t = SymbolCodeTemplate {
+            test_value: "unknown_code",
+        };
         assert_eq!(t.render().unwrap(), "Unknown weather");
     }
 }
