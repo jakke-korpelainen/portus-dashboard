@@ -77,6 +77,7 @@ pub struct Data {
     pub instant: Instant,
     pub next_1_hours: Option<Forecast>,
     pub next_6_hours: Option<Forecast>,
+    pub next_12_hours: Option<Forecast>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -109,8 +110,6 @@ pub struct Details {
     pub probability_of_precipitation: Option<f64>,
     pub probability_of_thunder: Option<f64>,
 }
-
-const FINNISH_TIMEZONE: chrono::FixedOffset = chrono::FixedOffset::east_opt(2 * 3600).unwrap(); // UTC+2
 
 pub const EMPTY_WEATHER_DATA: WeatherData = WeatherData {
     r#type: String::new(),
@@ -152,26 +151,6 @@ pub const EMPTY_WEATHER_DATA: WeatherData = WeatherData {
     },
 };
 
-pub async fn parse_weather_data(data: WeatherData) -> Result<WeatherData, Box<dyn Error>> {
-    // Convert the updated_at field to a chrono::DateTime
-    let updated_at = match chrono::DateTime::parse_from_rfc3339(&data.properties.meta.updated_at) {
-        Ok(datetime) => datetime,
-        Err(err) => {
-            println!("Error parsing updated_at: {:?}", err);
-            return Err(Box::new(err));
-        }
-    };
-
-    // Convert the updated_at field to Finnish timezone
-    let updated_at_finnish = updated_at.with_timezone(&FINNISH_TIMEZONE);
-
-    // The data stays as string so we can use the same type for the updated_at field
-    let mut enriched_data = data.clone();
-    enriched_data.properties.meta.updated_at =
-        updated_at_finnish.format("%d.%m.%Y %H:%M:%S").to_string();
-    Ok(enriched_data)
-}
-
 pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
     let client = reqwest::Client::new();
     let request = client
@@ -199,8 +178,8 @@ pub async fn get_weather_data() -> Result<WeatherData, Box<dyn Error>> {
     };
 
     // parse JSON into WeatherData struct
-    let data = match serde_json::from_value(response_json) {
-        Ok(data) => parse_weather_data(data).await?,
+    let data: WeatherData = match serde_json::from_value(response_json) {
+        Ok(data) => data,
         Err(err) => {
             println!("Error converting JSON to WeatherData: {:?}", err);
             return Err(Box::new(err));

@@ -3,7 +3,7 @@
   class="grid grid-cols-1 gap-4 h-full"
 >
   {% for group in residents %}
-  <div class="p-5 bg-black rounded-lg flex-grow bg-repeat" style="background-image: url('/public/panel.png');">
+  <div class="p-5 bg-black rounded-lg flex-grow bg-repeat" style="background-image: url('/assets/residents/panel.png');">
     <h3 class="text-2xl text-center text-white mt-0 mb-7">{{ group.floor }}</h3>
     <ul class="m-0 list-none p-0 grid grid-cols-2 gap-2">
       {% for resident in group.residents %}

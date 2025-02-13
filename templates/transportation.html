@@ -2,7 +2,7 @@
 <div class="border-2 border-gray-400 rounded-lg shadow-md bg-white">
   <div class="p-4">
     <div class="flex items-center gap-5">
-      <img src="public/hsl.svg" alt="HSL Logo" class="w-auto h-14">
+      <img src="/assets/transportation/hsl.svg" alt="HSL Logo" class="w-auto h-14">
       <h3 class="m-0 text-black">
         Real-time Transportation
         <span class="block text-xl text-gray-400">Next upcoming</span>
@@ -13,12 +13,12 @@
     {% for next in next_arrivals %}
       <div class="grid grid-cols-12 p-2 my-2 gap-2 rounded-lg relative bg-white border-2 border-[#bee4f8] text-[#007ac9]">
         <div class="col-span-3 gap-2 flex items-center py-5 pl-5">
-          <img class="w-8 h-8 m-0" src="public/{{ next.mode }}.svg"/>
+          <img class="w-8 h-8 m-0" src="/assets/transportation/{{ next.mode }}.svg"/>
           <span class="text-2xl text-center font-medium">{{ next.route_short_name }}</span>
         </div>
         <div class="gap-2 col-span-5 self-center">
           <div>
-            <span class="font-sans text">{{ next.headsign }}</span>
+            <span class="font-sans">{{ next.headsign }}</span>
           </div>
         </div>
         <span class="col-span-4 font-medium items-center rounded-md bg-[#007ac9] py-2 px-4 mr-5 text-[#ffffff] justify-self-end self-center">
