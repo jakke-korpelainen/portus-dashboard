@@ -89,5 +89,5 @@ echo -n "reboot? (y/n): "
 read REPLY
 echo
 if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
-    reboot
+    /sbin/reboot
 fi
