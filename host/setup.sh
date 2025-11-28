@@ -51,6 +51,9 @@ rm ${XINIT_CONFIG}
 echo "setting up X11 configuration..."
 cat <<EOL > ${XINIT_CONFIG}
 #!/bin/sh
+xset s off
+xset -dpms
+xset s noblank
 MODELINE=\$(cvt ${WIDTH} ${HEIGHT} ${REFRESH_RATE} | grep "Modeline" | sed -e 's/^.*Modeline //')
 DISPLAY=\$(xrandr -q | grep ' connected' | awk '{print $1}')
 xrandr --newmode "\${MODELINE}"
@@ -58,6 +61,7 @@ xrandr --addmode \${DISPLAY} ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
 xrandr --output \${DISPLAY} --mode ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
 chromium --kiosk --incognito '${DASHBOARD_URL}'
 EOL
+chmod +x ${XINIT_CONFIG}
 
 cat <<EOL > ${SYSTEMD_DASHBOARD}
 [Unit]
