@@ -85,8 +85,9 @@ systemctl start portus-dashboard
 echo "dashboard systemd service created"
 
 # Wait for user confirmation before rebooting
-read -p "reboot? (y/n): " -n 1 -r
+echo -n "reboot? (y/n): "
+read REPLY
 echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     reboot
 fi
