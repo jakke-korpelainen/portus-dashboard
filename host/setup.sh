@@ -84,7 +84,7 @@ systemctl start portus-dashboard
 echo "dashboard systemd service created"
 
 # setup autologin to tty1
-sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
+mkdir -p /etc/systemd/system/getty@tty1.service.d
 cat <<EOL > /etc/systemd/system/getty@tty1.service.d/override.conf
 [Service]
 ExecStart=
