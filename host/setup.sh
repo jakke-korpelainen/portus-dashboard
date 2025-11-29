@@ -61,8 +61,7 @@ XRANDR_DISPLAY=\$(xrandr -q | grep ' connected primary' | awk '{print \$1}')
 xrandr --newmode \${XRANDR_MODELINE_NAME} \${XRANDR_MODELINE_PARAMS}
 xrandr --addmode \${XRANDR_DISPLAY} ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
 xrandr --output \${XRANDR_DISPLAY} --mode ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
-xterm
-#chromium --kiosk --incognito '${DASHBOARD_URL}'
+chromium --kiosk --incognito '${DASHBOARD_URL}'
 EOL
 chmod +x ${XINIT_CONFIG}
 
