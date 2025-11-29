@@ -12,6 +12,10 @@ Aiming to run this on raspberry with a small screen in the lobby.
 
 askama, axum, reqwest, serde, serde_json, tokio
 
+## Host
+
+`host/setup.sh` a setup script for Debian 13 exists for setting up the host machine.
+
 ## Features (planned)
 
 - List of occupants
