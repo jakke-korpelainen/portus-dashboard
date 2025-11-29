@@ -14,7 +14,13 @@ askama, axum, reqwest, serde, serde_json, tokio
 
 ## Host
 
-`host/setup.sh` a setup script for Debian 13 exists for setting up the host machine.
+`host/setup.sh` a setup script for Debian trixie exists for setting up the host machine.
+
+The script requires root priviliges and works best if ran right after a fresh debian desktop environmentless installation and logging in.
+
+The host setup script installs minimal wayland sway with firefox in kiosk mode and setups autologin for a kiosk user.
+
+The script also attempts now to do some resolution & vertical orientation setup, but this needs refinement to work consistently.
 
 ## Features (planned)
 
