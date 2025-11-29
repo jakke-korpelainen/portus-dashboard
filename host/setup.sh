@@ -11,6 +11,7 @@ KIOSK_URL=http://localhost:3000
 SYSTEMD_DASHBOARD=/etc/systemd/system/portus-dashboard.service
 SWAY_LANG=fi
 SWAY_CONFIG="/home/${KIOSK_USER}/.config/sway/config"
+SWAY_STARTUP=/home/${KIOSK_USER}/sway_startup.sh
 HEIGHT=1920
 WIDTH=1080
 REFRESH_RATE=60
@@ -31,7 +32,7 @@ systemctl restart systemd-logind
 
 echo "installing host packages"
 apt update
-apt install -y --no-install-recommends sway firefox-esr xwayland kitty
+apt install -y --no-install-recommends curl sway firefox-esr xwayland kitty
 
 echo "configuring ${KIOSK_USER} user"
 # ensure kiosk user & permissions
@@ -49,12 +50,12 @@ output HDMI-1 {
   pos ${WIDTH} 0
 }
 output DP-1 {
-res ${WIDTH}x${HEIGHT}
+  res ${WIDTH}x${HEIGHT}
   transform 90
   pos ${WIDTH} 0
 }
 output Virtual-1 {
-res ${WIDTH}x${HEIGHT}
+  res ${WIDTH}x${HEIGHT}
   pos ${WIDTH} 0
 }
 input * {
@@ -62,6 +63,25 @@ input * {
 }
 exec firefox -popups -chrome -kiosk -url "${KIOSK_URL}"
 EOL
+
+cat <<EOL > ${SWAY_STARTUP}
+#!/bin/sh
+
+# Function to check if the server is up
+check_server() {
+  curl -s ${KIOSK_URL} > /dev/null
+  return $?
+}
+
+# Wait until the server is up
+until check_server; do
+  echo "Waiting for the dashboard service to be ready..."
+  sleep 1
+done
+
+exec firefox -popups -chrome -kiosk -url "${KIOSK_URL}"
+EOL
+chmod +x ${SWAY_STARTUP}
 
 # setup autologin to tty1
 mkdir -p /etc/systemd/system/getty@tty1.service.d
