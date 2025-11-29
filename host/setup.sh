@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # this script setups a fresh e.g. debian for wayland to autostart into
-# chromium in kiosk mode running the compiled dashboard binary
+# firefox in kiosk mode running the compiled dashboard binary
 
 # CONFIG
 INIT_DIR=$(pwd)
@@ -31,7 +31,7 @@ systemctl restart systemd-logind
 
 echo "installing host packages"
 apt update
-apt install -y --no-install-recommends sway chromium xwayland kitty
+apt install -y --no-install-recommends sway firefox-esr xwayland kitty
 
 echo "configuring ${KIOSK_USER} user"
 # ensure kiosk user & permissions
@@ -60,7 +60,7 @@ res ${WIDTH}x${HEIGHT}
 input * {
  xkb_layout "${SWAY_LANG}"
 }
-exec chromium --kiosk --no-first-run --disable-infobars --disable-session-crashed-bubble --disable-restore-session-state ${KIOSK_URL}
+exec firefox -popups -chrome -kiosk -url "${KIOSK_URL}"
 EOL
 
 # setup autologin to tty1
