@@ -1,18 +1,18 @@
 #!/bin/sh
 
-# this script setups a fresh e.g. debian to autostart
-# into chromium in kiosk mode running the compiled dashboard binary
-
-# pre-requisite: autostart user exists
+# this script setups a fresh e.g. debian for wayland to autostart into
+# chromium in kiosk mode running the compiled dashboard binary
 
 # CONFIG
 INIT_DIR=$(pwd)
-XINIT_CONFIG=/home/autostart/.xinitrc
-AUTOSTART_BASH_CONFIG=/home/autostart/.bashrc
+KIOSK_USER=autostart
+KIOSK_USER_RUN="/run/user/$(id -u $KIOSK_USER)"
+KIOSK_URL=http://localhost:3000
 SYSTEMD_DASHBOARD=/etc/systemd/system/portus-dashboard.service
-DASHBOARD_URL=http://localhost:3000
-WIDTH=1080
+SWAY_LANG=fi
+SWAY_CONFIG="/home/${KIOSK_USER}/.config/sway/config"
 HEIGHT=1920
+WIDTH=1080
 REFRESH_RATE=60
 
 # ensure root
@@ -21,6 +21,13 @@ if [ "$(id -u)" -ne 0 ]; then
     su -c "$0 $@" root
     exit $?
 fi
+
+# ensure kiosk user & permissions
+adduser ${KIOSK_USER}
+usermod -aG video,input,render ${KIOSK_USER}
+mkdir -p "${KIOSK_USER_RUN}"
+chown "${KIOSK_USER}" "${KIOSK_USER_RUN}"
+chmod 0700 "${KIOSK_USER_RUN}"
 
 apt update
 
@@ -42,28 +49,31 @@ if ! command -v portus-dashboard &> /dev/null; then
 fi
 
 echo "installing host packages"
-apt update
-apt install -y --no-install-recommends xcvt x11-xserver-utils xserver-common xserver-xorg xinit chromium
+apt install -y --no-install-recommends sway chromium xwayland kitty
 
-echo "configuring autostart user"
-rm ${XINIT_CONFIG}
-# configure for any primary display
-echo "setting up X11 configuration..."
-cat <<EOL > ${XINIT_CONFIG}
-#!/bin/sh
-xset s off
-xset -dpms
-xset s noblank
-XRANDR_MODELINE=\$(cvt ${WIDTH} ${HEIGHT} ${REFRESH_RATE} | grep "Modeline" | sed -e 's/^.*Modeline //')
-XRANDR_MODELINE_NAME=\$(echo \$XRANDR_MODELINE | sed -n 's/^"\([^"]*\)".*/\1/p')
-XRANDR_MODELINE_PARAMS=\$(echo \$XRANDR_MODELINE | cut -d' ' -f2-)
-XRANDR_DISPLAY=\$(xrandr -q | grep ' connected primary' | awk '{print \$1}')
-xrandr --newmode \${XRANDR_MODELINE_NAME} \${XRANDR_MODELINE_PARAMS}
-xrandr --addmode \${XRANDR_DISPLAY} ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
-xrandr --output \${XRANDR_DISPLAY} --mode ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
-chromium --kiosk --incognito '${DASHBOARD_URL}'
+echo "configuring ${KIOSK_USER} user"
+mkdir -p "/home/${KIOSK_USER}/.config/sway"
+cat <<EOL > ${SWAY_CONFIG}
+output * bg #000000 solid_color
+output HDMI-1 {
+  res ${WIDTH}x${HEIGHT}
+  transform 90
+  pos ${WIDTH} 0
+}
+output DP-1 {
+res ${WIDTH}x${HEIGHT}
+  transform 90
+  pos ${WIDTH} 0
+}
+output Virtual-1 {
+res ${WIDTH}x${HEIGHT}
+  pos ${WIDTH} 0
+}
+input * {
+ xkb_layout "${SWAY_LANG}"
+}
+exec chromium --kiosk --no-first-run --disable-infobars --disable-session-crashed-bubble --disable-restore-session-state ${KIOSK_URL}
 EOL
-chmod +x ${XINIT_CONFIG}
 
 cat <<EOL > ${SYSTEMD_DASHBOARD}
 [Unit]
@@ -71,8 +81,8 @@ Description=Portus Dashboard
 After=network.target
 
 [Service]
-User=autostart
-WorkingDirectory=/home/autostart
+User=${KIOSK_USER}
+WorkingDirectory=/home/${KIOSK_USER}
 ExecStart=/usr/local/bin/portus-dashboard
 Restart=always
 RestartSec=5s
@@ -95,16 +105,23 @@ mkdir -p /etc/systemd/system/getty@tty1.service.d
 cat <<EOL > /etc/systemd/system/getty@tty1.service.d/override.conf
 [Service]
 ExecStart=
-ExecStart=/sbin/agetty --autologin autostart --noclear %I $TERM
+ExecStart=-/sbin/agetty --autologin ${KIOSK_USER} --noclear %I $TERM
 Type=idle
 EOL
 
-# setup startx tty1 to autostart bashrc
-if ! grep -q "startx" ${AUTOSTART_BASH_CONFIG}; then
-  echo 'if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then' >> ${AUTOSTART_BASH_CONFIG}
-  echo '  startx' >> ${AUTOSTART_BASH_CONFIG}
-  echo 'fi' >> ${AUTOSTART_BASH_CONFIG}
-fi
+cat <<EOL > /home/${KIOSK_USER}/.bash_profile
+export XDG_SESSION_TYPE=wayland
+export XDG_RUNTIME_DIR=${KIOSK_USER_RUN}
+exec sway
+EOL
+
+cat <<EOL > /etc/systemd/logind.conf
+[Login]
+HandleLidSwitch=ignore
+IdleAction=ignore
+EOL
+
+systemctl restart systemd-logind
 
 # wait for user confirmation before rebooting
 echo -n "reboot? (y/n): "
