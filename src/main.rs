@@ -1,4 +1,7 @@
-use axum::{routing::get, Router};
+use axum::{
+    response::Redirect,
+    routing::{get, Router},
+};
 use dotenv::dotenv;
 use tower_http::services::ServeDir;
 
@@ -20,8 +23,9 @@ async fn start_web_server() {
     const WEB_SERVER_PORT: u16 = 3000;
 
     let app = Router::new()
-        // `GET /` goes to `root`
-        .route("/", get(dashboard::dashboard))
+        .route("/", get(|| async { Redirect::permanent("/primary") }))
+        .route("/primary", get(dashboard::dashboard_primary))
+        .route("/secondary", get(dashboard::dashboard_secondary))
         .nest_service("/assets", ServeDir::new("assets"));
 
     let server_url = format!("0.0.0.0:{}", WEB_SERVER_PORT);

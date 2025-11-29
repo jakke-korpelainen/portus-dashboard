@@ -1,6 +1,8 @@
 use axum::response::IntoResponse;
 use residents::get_residents;
-use templates::{DashboardTemplate, HousingCompany, HtmlTemplate};
+use templates::{
+    DashboardPrimaryTemplate, DashboardSecondaryTemplate, HousingCompany, HtmlTemplate,
+};
 use tokio::task;
 use weather::{get_weather_data, EMPTY_WEATHER_DATA};
 
@@ -8,13 +10,19 @@ use super::*;
 
 // basic handler that responds with a static string
 #[axum::debug_handler]
-pub async fn dashboard() -> impl IntoResponse {
-    // residents worker
-    let handle_residents = task::spawn(async {
-        let residents = get_residents();
-        residents
-    });
+pub async fn dashboard_primary() -> impl IntoResponse {
+    let residents = get_residents();
 
+    HtmlTemplate(DashboardPrimaryTemplate {
+        housing_company: HousingCompany {
+            name: "Asunto Oy Portus Novus".to_string(),
+            address: "Capellanranta 3 D, 00580 Helsinki".to_string(),
+        },
+        residents,
+    })
+}
+
+pub async fn dashboard_secondary() -> impl IntoResponse {
     // weather worker
     let handle_weather = task::spawn(async {
         let weather = match get_weather_data().await {
@@ -40,26 +48,18 @@ pub async fn dashboard() -> impl IntoResponse {
         next_arrivals
     });
 
-    let news = task::spawn(async { news::load_news().await })
-        .await
-        .unwrap();
+    /*let news = task::spawn(async { news::load_news().await })
+    .await
+    .unwrap();*/
 
-    let (residents, next_arrivals, weather) =
-        tokio::join!(handle_residents, handle_transportation, handle_weather);
+    let (next_arrivals, weather) = tokio::join!(handle_transportation, handle_weather);
 
-    HtmlTemplate(DashboardTemplate {
+    HtmlTemplate(DashboardSecondaryTemplate {
         housing_company: HousingCompany {
             name: "Asunto Oy Portus Novus".to_string(),
             address: "Capellanranta 3 D, 00580 Helsinki".to_string(),
         },
         next_arrivals: match next_arrivals {
-            Ok(data) => data,
-            Err(e) => {
-                println!("Error joining: {:?}", e);
-                vec![]
-            }
-        },
-        residents: match residents {
             Ok(data) => data,
             Err(e) => {
                 println!("Error joining: {:?}", e);
@@ -73,6 +73,6 @@ pub async fn dashboard() -> impl IntoResponse {
                 EMPTY_WEATHER_DATA
             }
         },
-        news,
+        // news,
     })
 }

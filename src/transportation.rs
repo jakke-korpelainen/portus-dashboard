@@ -172,7 +172,7 @@ pub async fn get_next_arrivals() -> Result<Vec<Arrivals>, Box<dyn Error>> {
 
     let client = reqwest::Client::new();
     let request = client
-        .post("https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql")
+        .post("https://api.digitransit.fi/routing/v2/hsl/gtfs/v1")
         .header(
             "digitransit-subscription-key",
             &CONFIG.digitransit_subscription_key,
@@ -191,6 +191,9 @@ pub async fn get_next_arrivals() -> Result<Vec<Arrivals>, Box<dyn Error>> {
 
     // first get text, easier to debug if something goes wrong
     let response_text = response.text().await.unwrap();
+
+    // Log the raw response text
+    println!("Raw response text: {:?}", response_text);
 
     // parse text into JSON
     let response_json: serde_json::Value = match serde_json::from_str(&response_text) {
