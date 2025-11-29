@@ -1,175 +1,215 @@
 <!-- Weather Section -->
-<div class="border-2 border-gray-400 bg-white text-black p-4 rounded-lg shadow-md">
-  <h3 class="mt-5 text-black">
-    Weather
-    <span class="block text-gray-400">Forecast {{ weather.properties.meta.updated_at|iso_to_fi }}</span>
-  </h3>
-  <div class="flex flex-col divide-y">
-    <div class="pb-5">
-      <p class="font-bold">Now</p>
-      <!-- instant forecast -->
-      <dl class="m-0">
-        <!-- air temp in celsius -->
-        {% match weather.properties.timeseries[0].data.instant.details.air_temperature %}
-        {% when Some with (air_temperature) %}
-          <div class="grid grid-cols-2">
-            <dt class="text-black uppercase font-medium leading-6 self-center mt-0">
-              Temperature
-            </dt>
-            <dd class="mt-1 text-black leading-6">
-              {{ air_temperature }} 
-              {{ weather.properties.meta.units.air_temperature }}
-            </dd>
-          </div>
-        {% when None %} 
-        {% endmatch %} 
+<div
+    class="flex flex-col border-2 border-gray-400 bg-white text-black p-4 rounded-lg shadow-md"
+>
+    <h3 class="mt-0 text-black">
+        Weather
+        <span class="block text-sm text-gray-400"
+            >{{ weather.properties.meta.updated_at|iso_to_fi }}</span
+        >
+    </h3>
+    <div class="flex flex-col divide-y gap-2">
+        <div>
+            <p class="font-bold">Now</p>
+            <!-- instant forecast -->
+            <dl class="m-0">
+                <!-- air temp in celsius -->
+                {% match
+                weather.properties.timeseries[0].data.instant.details.air_temperature
+                %} {% when Some with (air_temperature) %}
+                <div class="text-sm grid grid-cols-2">
+                    <dt
+                        class="text-black uppercase font-medium leading-6 self-center mt-0"
+                    >
+                        Temperature
+                    </dt>
+                    <dd class="mt-1 text-black leading-6">
+                        {{ air_temperature }} {{
+                        weather.properties.meta.units.air_temperature }}
+                    </dd>
+                </div>
+                {% when None %} {% endmatch %}
 
-        <!-- relative humidity -->
-        {% match weather.properties.timeseries[0].data.instant.details.relative_humidity %}
-        {% when Some with (relative_humidity) %}
-          <div class="grid grid-cols-2">
-            <dt class="text-black uppercase font-medium leading-6 self-center mt-0">
-              Humidity
-            </dt>
-            <dd class="mt-1 text-black leading-6">
-              {{ relative_humidity }} {{ weather.properties.meta.units.relative_humidity }}
-            </dd>
-          </div>
-        {% when None %} 
-        {% endmatch %}
+                <!-- relative humidity -->
+                {% match
+                weather.properties.timeseries[0].data.instant.details.relative_humidity
+                %} {% when Some with (relative_humidity) %}
+                <div class="text-sm grid grid-cols-2">
+                    <dt
+                        class="uppercase text-black font-medium leading-6 self-center mt-0"
+                    >
+                        Humidity
+                    </dt>
+                    <dd class="mt-1 text-black leading-6">
+                        {{ relative_humidity }} {{
+                        weather.properties.meta.units.relative_humidity }}
+                    </dd>
+                </div>
+                {% when None %} {% endmatch %}
 
-        <!-- wind speed in m/s -->
-        {% match weather.properties.timeseries[0].data.instant.details.wind_speed %} 
-        {% when Some with (wind_speed) %}
-          <div class="grid grid-cols-2">
-            <dt class="text-black uppercase font-medium leading-6 self-center mt-0">
-              Wind
-            </dt>
-            <dd class="mt-1 text-black leading-6">
-              {{ wind_speed }} 
-              {{ weather.properties.meta.units.wind_speed }}
-            </dd>
-          </div>
-        {% when None %}
-        {% endmatch %}
-        
-        <!-- wind speed of gust in m/s -->
-        {% match weather.properties.timeseries[0].data.instant.details.wind_speed_of_gust %} 
-        {% when Some with (wind_speed_of_gust) %}
-          <div class="grid grid-cols-2">
-            <dt class="text-black uppercase font-medium leading-6 self-center mt-0">
-              Wind (Gust)
-            </dt>
-            <dd class="mt-1 text-black leading-6">
-              {{ wind_speed_of_gust }} 
-              {{ weather.properties.meta.units.wind_speed_of_gust }}
-            </dd>
-          </div>
-        {% when None %}
-        {% endmatch %}
+                <!-- wind speed in m/s -->
+                {% match
+                weather.properties.timeseries[0].data.instant.details.wind_speed
+                %} {% when Some with (wind_speed) %}
+                <div class="text-sm grid grid-cols-2">
+                    <dt
+                        class="text-black uppercase font-medium leading-6 self-center mt-0"
+                    >
+                        Wind
+                    </dt>
+                    <dd class="mt-1 text-black leading-6">
+                        {{ wind_speed }} {{
+                        weather.properties.meta.units.wind_speed }}
+                    </dd>
+                </div>
+                {% when None %} {% endmatch %}
 
-        <!-- wind direction -->
-        {% match weather.properties.timeseries[0].data.instant.details.wind_from_direction %} 
-        {% when Some with (wind_from_direction) %}
-          <div class="grid grid-cols-2">
-            <dt class="text-black uppercase font-medium leading-6 self-center mt-0">
-              Wind Direction
-            </dt>
-            <dd class="mt-1 text-black leading-6">
-              {{ wind_from_direction }} 
-              {{ weather.properties.meta.units.wind_from_direction }}
-              <svg xmlns="http://www.w3.org/2000/svg" class="inline h-3 w-3 transform rotate-[{{ wind_from_direction|round }}deg]" viewBox="0 0 20 20" fill="black">
-                <path fill-rule="evenodd" d="M10 2a1 1 0 01.707.293l7 7a1 1 0 01-1.414 1.414L11 5.414V18a1 1 0 11-2 0V5.414L3.707 10.707a1 1 0 01-1.414-1.414l7-7A1 1 0 0110 2z" clip-rule="evenodd" />
-              </svg>
-            </dd>
-          </div>
-        {% when None %}
-        {% endmatch %}
-      </dl>
+                <!-- wind speed of gust in m/s -->
+                {% match
+                weather.properties.timeseries[0].data.instant.details.wind_speed_of_gust
+                %} {% when Some with (wind_speed_of_gust) %}
+                <div class="text-sm grid grid-cols-2">
+                    <dt
+                        class="text-black uppercase font-medium leading-6 self-center mt-0"
+                    >
+                        Wind (Gust)
+                    </dt>
+                    <dd class="mt-1 text-black leading-6">
+                        {{ wind_speed_of_gust }} {{
+                        weather.properties.meta.units.wind_speed_of_gust }}
+                    </dd>
+                </div>
+                {% when None %} {% endmatch %}
+
+                <!-- wind direction -->
+                {% match
+                weather.properties.timeseries[0].data.instant.details.wind_from_direction
+                %} {% when Some with (wind_from_direction) %}
+                <div class="text-sm grid grid-cols-2">
+                    <dt
+                        class="text-black uppercase font-medium leading-6 self-center mt-0"
+                    >
+                        Wind Direction
+                    </dt>
+                    <dd class="mt-1 text-black leading-6">
+                        {{ wind_from_direction }} {{
+                        weather.properties.meta.units.wind_from_direction }}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="inline h-3 w-3 transform rotate-[{{ wind_from_direction|round }}deg]"
+                            viewBox="0 0 20 20"
+                            fill="black"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M10 2a1 1 0 01.707.293l7 7a1 1 0 01-1.414 1.414L11 5.414V18a1 1 0 11-2 0V5.414L3.707 10.707a1 1 0 01-1.414-1.414l7-7A1 1 0 0110 2z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </dd>
+                </div>
+                {% when None %} {% endmatch %}
+            </dl>
+        </div>
+        <div class="grid grid-cols-2 divide-x">
+            <div>
+                <!-- 1 hour forecast -->
+                <p class="font-bold">Next 1 hour</p>
+
+                <dl class="m-0">
+                    {% match weather.properties.timeseries[0].data.next_1_hours
+                    %} {% when Some with (forecast) %}
+                    <div class="text-sm inline-flex gap-2 items-center mb-5">
+                        <img
+                            src="/assets/weather/{{ forecast.summary.symbol_code }}.svg"
+                            class="w-10 h-10 m-0"
+                        />
+                        {{ forecast.summary.symbol_code|symbol_code_desc }}
+                    </div>
+                    <!-- chance of rain -->
+                    {% match forecast.details.probability_of_precipitation %} {%
+                    when Some with (probability_of_precipitation) %}
+                    <div class="text-sm grid grid-cols-3">
+                        <dt
+                            class="col-span-2 text-black uppercase font-medium leading-6 self-center mt-0"
+                        >
+                            Chance of Rain
+                        </dt>
+                        <dd class="mt-1 text-black leading-6">
+                            {{ probability_of_precipitation }} {{
+                            weather.properties.meta.units.probability_of_precipitation
+                            }}
+                        </dd>
+                    </div>
+                    {% when None %} {% endmatch %}
+                    <!-- chance of thunder -->
+                    {% match forecast.details.probability_of_thunder %} {% when
+                    Some with (probability_of_thunder) %}
+                    <div class="text-sm grid grid-cols-3">
+                        <dt
+                            class="col-span-2 text-black uppercase font-medium leading-6 self-center mt-0"
+                        >
+                            Chance of Thunder
+                        </dt>
+                        <dd class="mt-1 text-black leading-6">
+                            {{ probability_of_thunder }} {{
+                            weather.properties.meta.units.probability_of_thunder
+                            }}
+                        </dd>
+                    </div>
+                    {% when None %} {% endmatch %} {% when None %} {% endmatch
+                    %}
+                </dl>
+            </div>
+            <div class="pl-2">
+                <!-- 1 hour forecast -->
+                <p class="font-bold">Next 12 hour</p>
+
+                <dl class="m-0">
+                    {% match weather.properties.timeseries[0].data.next_12_hours
+                    %} {% when Some with (forecast) %}
+                    <div class="text-sm inline-flex gap-2 items-center mb-5">
+                        <img
+                            src="/assets/weather/{{ forecast.summary.symbol_code }}.svg"
+                            class="w-10 h-10 m-0"
+                        />
+                        {{ forecast.summary.symbol_code|symbol_code_desc }}
+                    </div>
+                    <!-- chance of rain -->
+                    {% match forecast.details.probability_of_precipitation %} {%
+                    when Some with (probability_of_precipitation) %}
+                    <div class="text-sm grid grid-cols-3">
+                        <dt
+                            class="col-span-2 text-black uppercase font-medium leading-6 self-center mt-0"
+                        >
+                            Chance of Rain
+                        </dt>
+                        <dd class="mt-1 text-black leading-6">
+                            {{ probability_of_precipitation }} {{
+                            weather.properties.meta.units.probability_of_precipitation
+                            }}
+                        </dd>
+                    </div>
+                    {% when None %} {% endmatch %}
+                    <!-- chance of thunder -->
+                    {% match forecast.details.probability_of_thunder %} {% when
+                    Some with (probability_of_thunder) %}
+                    <div class="text-sm grid grid-cols-3">
+                        <dt
+                            class="col-span-2 text-black uppercase font-medium leading-6 self-center mt-0"
+                        >
+                            Chance of Thunder
+                        </dt>
+                        <dd class="mt-1 text-black leading-6">
+                            {{ probability_of_thunder }} {{
+                            weather.properties.meta.units.probability_of_thunder
+                            }}
+                        </dd>
+                    </div>
+                    {% when None %} {% endmatch %} {% when None %} {% endmatch
+                    %}
+                </dl>
+            </div>
+        </div>
     </div>
-    <div class="grid grid-cols-2 divide-x">
-      <div class="pl-5">
-        <!-- 1 hour forecast -->
-        <p class="font-bold">Next 1 hour</p>
-
-        <dl class="m-0">
-          {% match weather.properties.timeseries[0].data.next_1_hours %}
-          {% when Some with (forecast) %}
-            <div class="inline-flex gap-2 items-center mb-5">
-              <img src="/assets/weather/{{ forecast.summary.symbol_code }}.svg" class="w-14 h-14 m-0">
-              {{ forecast.summary.symbol_code|symbol_code_desc }}
-            </div>
-            <!-- chance of rain -->
-            {% match forecast.details.probability_of_precipitation %}
-            {% when Some with (probability_of_precipitation) %}
-            <div class="grid grid-cols-3">
-              <dt class="col-span-2 text-black uppercase font-medium leading-6 self-center mt-0">
-                Chance of Rain
-              </dt>
-              <dd class="mt-1 text-black leading-6">
-                {{ probability_of_precipitation }} {{ weather.properties.meta.units.probability_of_precipitation }}
-              </dd>
-            </div>
-            {% when None %} 
-            {% endmatch %}
-            <!-- chance of thunder -->
-            {% match forecast.details.probability_of_thunder %}
-            {% when Some with (probability_of_thunder) %}
-            <div class="grid grid-cols-3">
-              <dt class="col-span-2 text-black uppercase font-medium leading-6 self-center mt-0">
-                Chance of Thunder
-              </dt>
-              <dd class="mt-1 text-black leading-6">
-                {{ probability_of_thunder }} {{ weather.properties.meta.units.probability_of_thunder }}
-              </dd>
-            </div>
-            {% when None %} 
-            {% endmatch %}
-          {% when None %} 
-          {% endmatch %}
-        </dl>
-      </div>
-      <div class="pl-5">
-        <!-- 1 hour forecast -->
-        <p class="font-bold">Next 12 hour</p>
-
-        <dl class="m-0">
-          {% match weather.properties.timeseries[0].data.next_12_hours %}
-          {% when Some with (forecast) %}
-            <div class="inline-flex gap-2 items-center mb-5">
-              <img src="/assets/weather/{{ forecast.summary.symbol_code }}.svg" class="w-14 h-14 m-0">
-              {{ forecast.summary.symbol_code|symbol_code_desc }}
-            </div>
-            <!-- chance of rain -->
-            {% match forecast.details.probability_of_precipitation %}
-            {% when Some with (probability_of_precipitation) %}
-            <div class="grid grid-cols-3">
-              <dt class="col-span-2 text-black uppercase font-medium leading-6 self-center mt-0">
-                Chance of Rain
-              </dt>
-              <dd class="mt-1 text-black leading-6">
-                {{ probability_of_precipitation }} {{ weather.properties.meta.units.probability_of_precipitation }}
-              </dd>
-            </div>
-            {% when None %} 
-            {% endmatch %}
-            <!-- chance of thunder -->
-            {% match forecast.details.probability_of_thunder %}
-            {% when Some with (probability_of_thunder) %}
-            <div class="grid grid-cols-3">
-              <dt class="col-span-2 text-black uppercase font-medium leading-6 self-center mt-0">
-                Chance of Thunder
-              </dt>
-              <dd class="mt-1 text-black leading-6">
-                {{ probability_of_thunder }} {{ weather.properties.meta.units.probability_of_thunder }}
-              </dd>
-            </div>
-            {% when None %} 
-            {% endmatch %}
-          {% when None %} 
-          {% endmatch %}
-        </dl>
-      </div>
-    </div>
-  </div>
 </div>
