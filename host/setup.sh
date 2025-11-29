@@ -9,6 +9,7 @@ KIOSK_USER=autostart
 KIOSK_USER_RUN="/run/user/$(id -u $KIOSK_USER)"
 KIOSK_URL=http://localhost:3000
 SYSTEMD_DASHBOARD=/etc/systemd/system/portus-dashboard.service
+DASHBOARD_SECRETS_FILE=/etc/portus-dashboard/secrets
 SWAY_LANG=fi
 SWAY_CONFIG="/home/${KIOSK_USER}/.config/sway/config"
 SWAY_STARTUP=/home/${KIOSK_USER}/sway_startup.sh
@@ -21,6 +22,13 @@ echo "asserting root"
 if [ "$(id -u)" -ne 0 ]; then
     su -c "$0 $@" root
     exit $?
+fi
+
+# try to locate from external media
+EXT_SECRETS_FILE=$(find /media/* -name "portus-dashboard.secrets" 2>/dev/null | head -n 1)
+if [ -z "$EXT_SECRETS_FILE" ]; then
+    echo "portus-dashboard.secrets not found on external mounts (/media). Exiting."
+    exit 1
 fi
 
 cat <<EOL > /etc/systemd/logind.conf
@@ -117,6 +125,12 @@ if ! command -v portus-dashboard &> /dev/null; then
     cd ${INIT_DIR}
 fi
 
+echo "creating systemd-creds for portus-dashboard"
+mkdir -p /etc/portus-dashboard
+systemd-creds encrypt ${EXT_SECRETS_FILE} ${DASHBOARD_SECRETS_FILE}
+echo "portus-dashboard stored encrypted"
+
+echo "creating systemd service for portus-dashboard"
 cat <<EOL > ${SYSTEMD_DASHBOARD}
 [Unit]
 Description=Portus Dashboard
@@ -129,6 +143,7 @@ ExecStart=/usr/local/bin/portus-dashboard
 Restart=always
 RestartSec=5s
 Environment=RUST_LOG=info
+LoadCredential=DIGITRANSIT_SUBSCRIPTION_KEY:${DASHBOARD_SECRETS_FILE}
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=portus-dashboard
@@ -140,7 +155,7 @@ EOL
 systemctl daemon-reload
 systemctl enable portus-dashboard
 systemctl start portus-dashboard
-echo "portus-dashboard systemd complete"
+echo "portus-dashboard systemd service complete"
 
 # wait for user confirmation before rebooting
 echo -n "reboot? (y/n): "

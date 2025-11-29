@@ -14,9 +14,12 @@ askama, axum, reqwest, serde, serde_json, tokio
 
 ## Host
 
-`host/setup.sh` a setup script for Debian trixie exists for setting up the host machine.
+`host/portus-dashboard.secrets` a file to pass the secrets during installation to be encrypted with systemd-creds encrypt
+`host/setup.sh` a setup script for Debian trixie exists for setting up the host machine. 
 
-The script requires root priviliges and works best if ran right after a fresh debian desktop environmentless installation and logging in.
+These files should be mounted on an external usb storage device to the host machine for installation, the setup script is then also easily able to find the secrets from it.
+
+The script elevates to root priviliges and works best if ran right after a fresh debian desktop environmentless installation and logging in.
 
 The host setup script installs minimal wayland sway with firefox in kiosk mode and setups autologin for a kiosk user.
 
