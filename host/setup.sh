@@ -56,6 +56,7 @@ output DP-1 {
 }
 output Virtual-1 {
   res ${WIDTH}x${HEIGHT}
+  transform 90
   pos ${WIDTH} 0
 }
 input * {
