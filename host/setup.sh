@@ -81,10 +81,27 @@ EOL
 systemctl daemon-reload
 systemctl enable portus-dashboard
 systemctl start portus-dashboard
-
 echo "dashboard systemd service created"
 
-# Wait for user confirmation before rebooting
+# setup autologin to tty1
+sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
+cat <<EOL > /etc/systemd/system/getty@tty1.service.d/override.conf
+[Service]
+ExecStart=
+ExecStart=/sbin/agetty --autologin autostart --noclear %I $TERM
+Type=idle
+EOL
+
+# setup bash for startx on tty1
+if ! grep -q "startx" /home/autostart/.bashrc; then
+  cat <<EOL >> /home/autostart/.bashrc
+if [ -z "\$DISPLAY" ] && [ "\$(tty)" = "/dev/tty1" ]; then
+  startx
+fi
+  EOL
+fi
+
+# wait for user confirmation before rebooting
 echo -n "reboot? (y/n): "
 read REPLY
 echo
