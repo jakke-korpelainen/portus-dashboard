@@ -55,11 +55,14 @@ xset s off
 xset -dpms
 xset s noblank
 XRANDR_MODELINE=\$(cvt ${WIDTH} ${HEIGHT} ${REFRESH_RATE} | grep "Modeline" | sed -e 's/^.*Modeline //')
-XRANDR_DISPLAY=\$(xrandr -q | grep ' connected' | awk '{print \$1}')
-xrandr --newmode "\${XRANDR_MODELINE}"
+XRANDR_MODELINE_NAME=\$(echo \$XRANDR_MODELINE | sed -n 's/^"\([^"]*\)".*/\1/p')
+XRANDR_MODELINE_PARAMS=\$(echo \$XRANDR_MODELINE | cut -d' ' -f2-)
+XRANDR_DISPLAY=\$(xrandr -q | grep ' connected primary' | awk '{print \$1}')
+xrandr --newmode \${XRANDR_MODELINE_NAME} \${XRANDR_MODELINE_PARAMS}
 xrandr --addmode \${XRANDR_DISPLAY} ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
 xrandr --output \${XRANDR_DISPLAY} --mode ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
-chromium --kiosk --incognito '${DASHBOARD_URL}'
+xterm
+#chromium --kiosk --incognito '${DASHBOARD_URL}'
 EOL
 chmod +x ${XINIT_CONFIG}
 
