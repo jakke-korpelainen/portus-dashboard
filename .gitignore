@@ -22,5 +22,6 @@ target/
 /target
 
 debug.html
+host/installer.iso
 
 .env
