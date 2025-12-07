@@ -77,7 +77,7 @@ pub struct Data {
     pub instant: Instant,
     pub next_1_hours: Option<Forecast>,
     pub next_6_hours: Option<Forecast>,
-    pub next_12_hours: Option<Forecast>
+    pub next_12_hours: Option<Forecast>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
