@@ -1,19 +1,13 @@
 use axum::{routing::get, Router};
-
+use dotenv::dotenv;
 use tower_http::services::ServeDir;
 
-use dotenv::dotenv;
-
 mod config;
-
 mod dashboard;
-
+mod news;
 mod residents;
-
-mod transportation;
-
 mod templates;
-
+mod transportation;
 mod weather;
 
 #[tokio::main(flavor = "current_thread")]
