@@ -40,9 +40,9 @@ pub async fn dashboard() -> impl IntoResponse {
         next_arrivals
     });
 
-    let news = task::spawn(async {
-        news::load_news().await
-    }).await.unwrap();
+    let news = task::spawn(async { news::load_news().await })
+        .await
+        .unwrap();
 
     let (residents, next_arrivals, weather) =
         tokio::join!(handle_residents, handle_transportation, handle_weather);

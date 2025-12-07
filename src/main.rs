@@ -1,6 +1,6 @@
 use axum::{routing::get, Router};
-use tower_http::services::ServeDir;
 use dotenv::dotenv;
+use tower_http::services::ServeDir;
 
 mod config;
 mod dashboard;

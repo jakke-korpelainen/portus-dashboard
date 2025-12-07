@@ -157,8 +157,8 @@ pub async fn parse_weather_data(data: WeatherData) -> Result<WeatherData, Box<dy
     let updated_at = match chrono::DateTime::parse_from_rfc3339(&data.properties.meta.updated_at) {
         Ok(datetime) => datetime,
         Err(err) => {
-        println!("Error parsing updated_at: {:?}", err);
-        return Err(Box::new(err));
+            println!("Error parsing updated_at: {:?}", err);
+            return Err(Box::new(err));
         }
     };
 
@@ -167,7 +167,8 @@ pub async fn parse_weather_data(data: WeatherData) -> Result<WeatherData, Box<dy
 
     // The data stays as string so we can use the same type for the updated_at field
     let mut enriched_data = data.clone();
-    enriched_data.properties.meta.updated_at = updated_at_finnish.format("%d.%m.%Y %H:%M:%S").to_string();
+    enriched_data.properties.meta.updated_at =
+        updated_at_finnish.format("%d.%m.%Y %H:%M:%S").to_string();
     Ok(enriched_data)
 }
 
