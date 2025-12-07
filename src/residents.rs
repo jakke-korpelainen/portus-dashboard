@@ -22,15 +22,7 @@ pub const APARTMENT_PREFIX: &str = "D";
 pub const RESIDENTS_AMOUNT: u8 = 39;
 pub const RESIDENTS_FLOORS: [Floor; 5] = [
     Floor {
-        floor: 2,
-        resident_amount: 7,
-    },
-    Floor {
-        floor: 3,
-        resident_amount: 8,
-    },
-    Floor {
-        floor: 4,
+        floor: 6,
         resident_amount: 8,
     },
     Floor {
@@ -38,8 +30,16 @@ pub const RESIDENTS_FLOORS: [Floor; 5] = [
         resident_amount: 8,
     },
     Floor {
-        floor: 6,
+        floor: 4,
         resident_amount: 8,
+    },
+    Floor {
+        floor: 3,
+        resident_amount: 8,
+    },
+    Floor {
+        floor: 2,
+        resident_amount: 7,
     },
 ];
 
