@@ -43,7 +43,7 @@ fi
 
 echo "installing host packages"
 apt update
-apt install -y --no-install-recommends xcvt xserver-xorg-core x11-xserver-utils xinit chromium
+apt install -y --no-install-recommends xcvt x11-xserver-utils xserver-common xserver-xorg xinit chromium
 
 echo "configuring autostart user"
 rm ${XINIT_CONFIG}
@@ -54,11 +54,11 @@ cat <<EOL > ${XINIT_CONFIG}
 xset s off
 xset -dpms
 xset s noblank
-MODELINE=\$(cvt ${WIDTH} ${HEIGHT} ${REFRESH_RATE} | grep "Modeline" | sed -e 's/^.*Modeline //')
-DISPLAY=\$(xrandr -q | grep ' connected' | awk '{print $1}')
-xrandr --newmode "\${MODELINE}"
-xrandr --addmode \${DISPLAY} ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
-xrandr --output \${DISPLAY} --mode ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
+XRANDR_MODELINE=\$(cvt ${WIDTH} ${HEIGHT} ${REFRESH_RATE} | grep "Modeline" | sed -e 's/^.*Modeline //')
+XRANDR_DISPLAY=\$(xrandr -q | grep ' connected' | awk '{print \$1}')
+xrandr --newmode "\${XRANDR_MODELINE}"
+xrandr --addmode \${XRANDR_DISPLAY} ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
+xrandr --output \${XRANDR_DISPLAY} --mode ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
 chromium --kiosk --incognito '${DASHBOARD_URL}'
 EOL
 chmod +x ${XINIT_CONFIG}
