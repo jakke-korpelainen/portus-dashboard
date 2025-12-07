@@ -1,4 +1,4 @@
-#[derive(Clone, Debug)]
+/*#[derive(Clone, Debug)]
 pub struct NewsItem {
     pub heading: String,
     pub content: String,
@@ -26,3 +26,4 @@ pub async fn load_news() -> Vec<NewsItem> {
 
     news.to_vec()
 }
+*/

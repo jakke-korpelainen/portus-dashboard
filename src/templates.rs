@@ -2,7 +2,7 @@ use askama::Template;
 use axum::response::{Html, IntoResponse, Response};
 use reqwest::StatusCode;
 
-use crate::{news::NewsItem, residents::Residents, transportation::Arrivals, weather::WeatherData};
+use crate::{residents::Residents, transportation::Arrivals, weather::WeatherData};
 
 pub struct HtmlTemplate<T>(pub T);
 
@@ -125,7 +125,7 @@ pub struct DashboardSecondaryTemplate {
     pub housing_company: HousingCompany,
     pub next_arrivals: Vec<Arrivals>,
     pub weather: WeatherData,
-    pub news: Vec<NewsItem>,
+    //pub news: Vec<NewsItem>,
 }
 
 #[cfg(test)]
