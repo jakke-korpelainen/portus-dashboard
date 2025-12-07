@@ -61,7 +61,7 @@ output Virtual-1 {
 input * {
  xkb_layout "${SWAY_LANG}"
 }
-exec firefox -popups -chrome -kiosk -url "${KIOSK_URL}"
+exec ${SWAY_STARTUP}
 EOL
 
 cat <<EOL > ${SWAY_STARTUP}
