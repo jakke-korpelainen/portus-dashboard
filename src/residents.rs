@@ -99,20 +99,18 @@ pub const COMMON_NAMES: [&str; 32] = [
 fn get_random_name() -> String {
     let mut rng = &mut thread_rng();
     let random_name = COMMON_NAMES.choose(&mut rng).unwrap();
-    
+
     if !rng.gen_bool(0.54) {
         return random_name.to_string();
     }
-    
+
     let binding = COMMON_NAMES
         .iter()
         .filter(|&name| name != random_name)
         .collect::<Vec<_>>();
 
-    let second_name = binding
-        .choose(&mut rng)
-        .unwrap();
-    
+    let second_name = binding.choose(&mut rng).unwrap();
+
     format!(
         "{}{}{}",
         random_name,
@@ -134,7 +132,7 @@ pub fn get_resident_floor(apartment_number: u8) -> String {
 
 pub fn get_residents() -> Vec<Residents> {
     let mut residents = Vec::with_capacity(RESIDENTS_AMOUNT as usize);
-    
+
     // Create residents from highest apartment number to lowest
     for index in (1..=RESIDENTS_AMOUNT).rev() {
         residents.push(Resident {
