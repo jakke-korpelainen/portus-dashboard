@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="public/tailwind.config.js"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="60">
+    <title>{{ housing_company.name }} Dashboard</title>
+    <link href="public/styles.css" rel="stylesheet" />
+  </head>
+  <body class="prose prose-invert max-w-full font-sans">
+    <!-- Header -->
+    <header class="flex items-center justify-between px-6 py-2 border-b-2 border-accent">
+      <h1 class="text-2xl font-bold mb-0 text-accent">
+        {{ housing_company.name }}
+        <span class="block font-mono uppercase text-sm text-white">{{ housing_company.address }}</span>
+      </h1>
+    </header>
+    <!-- Content -->
+    <main class="px-5">
+      <div
+        id="residents"
+        class="border-2 border-gray-500 p-4 rounded-lg shadow-md grid grid-cols-1 gap-4 h-full"
+      >
+        <h2 class="mt-0">Residents</h2>
+        {% for group in residents %}
+        <div class="p-5 bg-black border-2 border-gray-500 rounded-lg flex-grow">
+          <h3 class="mt-0 mb-2">Floor {{ group.floor }}</h3>
+          <ul class="m-0 list-none p-0 grid grid-cols-2 gap-2">
+            {% for resident in group.residents %}
+            <li class="m-0 grid grid-cols-4 gap-2 p-2 border-b border-gray-600 min-h-[4rem] items-center">
+              <span class="text-xl font-bold font-mono">{{ resident.apartment }}</span>
+              <span class="text-xl col-span-3 font-mono tracking-widest leading-tight">{{ resident.name }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- Feed -->
+      <div id="feed" class="border-2 border-gray-500 p-4 rounded-lg shadow-md h-full">
+        <h2 class="mt-0">Feed</h2>
+        <div class="flex flex-col justify-between h-full">
+          <div id="feed-tiles" class="grid gap-6 grid-cols-1">
+            <!-- Weather -->
+            <div class="weather">
+              <h3 class="mt-0">
+                Weather
+                <span class="block text-gray-400">Forecasted {{ weather.properties.meta.updated_at }}</span>
+              </h3>
+              <div class="flex flex-col">
+                <div class="grid grid-cols-2 divide-x">
+                  <div>
+                    <p class="font-bold">Now</p>
+                    <!-- instant forecast -->
+                    <dl class="m-0">
+                      <!-- relative humidity -->
+                      {% match weather.properties.timeseries[0].data.instant.details.relative_humidity %}
+                      {% when Some with (relative_humidity) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Humidity
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ relative_humidity }} {{ weather.properties.meta.units.relative_humidity }}
+                          </dd>
+                        </div>
+                      {% when None %} 
+                      {% endmatch %}
+
+                      <!-- air temp in celsius -->
+                      {% match weather.properties.timeseries[0].data.instant.details.air_temperature %}
+                      {% when Some with (air_temperature) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Temperature
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ air_temperature }} 
+                            {{ weather.properties.meta.units.air_temperature }}
+                          </dd>
+                        </div>
+                      {% when None %} 
+                      {% endmatch %} 
+                      <!-- wind speed in m/s -->
+                      {% match weather.properties.timeseries[0].data.instant.details.wind_speed %} 
+                      {% when Some with (wind_speed) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Wind
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ wind_speed }} 
+                            {{ weather.properties.meta.units.wind_speed }}
+                          </dd>
+                        </div>
+                      {% when None %}
+                      {% endmatch %}
+                    </dl>
+                  </div>
+                  <div class="pl-5">
+                    <!-- 1 hour forecast -->
+                    <p class="font-bold">Next 1 hour</p>
+
+                    <dl class="m-0">
+                      {% match weather.properties.timeseries[0].data.next_1_hours %}
+                      {% when Some with (forecast) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Description
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ forecast.summary.symbol_code }}
+                          </dd>
+                        </div>
+                        <!-- chance of rain -->
+                        {% match forecast.details.probability_of_precipitation %}
+                        {% when Some with (probability_of_precipitation) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Chance of Rain
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ probability_of_precipitation }} {{ weather.properties.meta.units.probability_of_precipitation }}
+                          </dd>
+                        </div>
+                        {% when None %} 
+                        {% endmatch %}
+                        <!-- chance of thunder -->
+                        {% match forecast.details.probability_of_thunder %}
+                        {% when Some with (probability_of_thunder) %}
+                        <div class="grid grid-cols-2">
+                          <dt class="text-sm uppercase font-medium leading-6 self-center mt-0">
+                            Chance of Thunder
+                          </dt>
+                          <dd class="mt-1 text-sm leading-6">
+                            {{ probability_of_thunder }} {{ weather.properties.meta.units.probability_of_thunder }}
+                          </dd>
+                        </div>
+                        {% when None %} 
+                        {% endmatch %}
+                      {% when None %} 
+                      {% endmatch %}
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- News -->
+            <div class="news">
+              <h3 class="m-0 pb-5">
+                News
+                <span class="block text-sm text-gray-400">What is going on in the building and in the area</span>
+              </h3>
+              <div class="grid gap-3">
+                <div class="p-4 rounded-lg border border-gray-600 bg-dark-row">
+                  <div class="flex items-start gap-3">
+                    <div class="rounded-full bg-red-900/30 p-3">
+                      <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h5 class="text-accent font-bold mb-1">Maintenance</h5>
+                      <p class="text-sm text-gray-200">The elevator will be out of service on Monday for maintenance.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-4 rounded-lg border border-gray-600 bg-dark-row">
+                  <div class="flex items-start gap-3">
+                    <div class="rounded-full bg-blue-900/30 p-3">
+                      <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h5 class="text-blue-400 font-bold mb-1">Board Meeting</h5>
+                      <p class="text-sm text-gray-200">A board meeting was held 1st of january. The full newsletter is available in the portal.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Transportation -->
+          <div id="transportation" class="col-span-3">
+            <div class="max-h-[55dvh] overflow-y-auto rounded-lg border border-gray-600 p-5">
+              <h4 class="m-0 pb-5">
+                Real-time Transportation
+                <span class="block text-xl text-gray-400">Nearest public transport options</span>
+              </h4>
+              {% for next in next_arrivals %}
+              <div class="grid grid-cols-12 p-2 my-2 border-2 border-accent gap-2 rounded-lg relative bg-dark-row">
+                <div class="col-span-2 inline-flex items-center justify-center">
+                    <span class="text-2xl font-mono font-bold tracking-widest">{{ next.route_short_name }}</span>
+                </div>
+                <div class="gap-2 col-span-6">
+                  <div class="flex justify-between gap-5 items-center">
+                    <span>{{ next.stop_name }}</span>
+                    <span class="absolute right-2 top-2 font-mono text-sm text-gray-600 text-xs">{{ next.gtfs_id }}</span>
+                  </div>
+                  <div>
+                    <span class="font-sans text-sm">{{ next.headsign }}</span>
+                  </div>
+                  <div>
+                    <span class="font-sans text-sm text-gray-400">{{ next.stop_desc }}</span>
+                  </div>
+                </div>
+                <span class="col-span-4 font-medium items-center rounded-md bg-[#CC4E33] p-2 text-white justify-self-end self-end">                  
+                  {{ next.realtime_text }}
+                </span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
