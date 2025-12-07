@@ -51,8 +51,8 @@ rm ${XINIT_CONFIG}
 echo "setting up X11 configuration..."
 cat <<EOL > ${XINIT_CONFIG}
 #!/bin/sh
-MODELINE=(cvt ${WIDTH} ${HEIGHT} ${REFRESH_RATE} | grep "Modeline" | sed -e 's/^.*"\(.*\)".*$/\1/')
-DISPLAY=(xrandr -q | grep ' connected' | awk '{print $1}')
+MODELINE=\$(cvt ${WIDTH} ${HEIGHT} ${REFRESH_RATE} | grep "Modeline" | sed -e 's/^.*"\(.*\)".*$/\1/')
+DISPLAY=\$(xrandr -q | grep ' connected' | awk '{print $1}')
 xrandr --newmode "${MODELINE}"
 xrandr --addmode ${DISPLAY} ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
 xrandr --output ${DISPLAY} --mode ${WIDTH}x${HEIGHT}_${REFRESH_RATE}.00
