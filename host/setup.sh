@@ -42,7 +42,7 @@ fi
 
 echo "installing host packages"
 apt update
-apt install -y --no-install-recommends xcvt xserver-xorg-core xinit chromium
+apt install -y --no-install-recommends xcvt xserver-xorg-core x11-xserver-utils xinit chromium
 
 echo "configuring autostart user"
 rm ${XINIT_CONFIG}
