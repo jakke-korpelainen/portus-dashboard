@@ -113,11 +113,17 @@ mod filters {
 }
 
 #[derive(Template)]
-#[template(path = "dashboard.html")]
-pub struct DashboardTemplate {
+#[template(path = "dashboard_primary.html")]
+pub struct DashboardPrimaryTemplate {
+    pub housing_company: HousingCompany,
+    pub residents: Vec<Residents>,
+}
+
+#[derive(Template)]
+#[template(path = "dashboard_secondary.html")]
+pub struct DashboardSecondaryTemplate {
     pub housing_company: HousingCompany,
     pub next_arrivals: Vec<Arrivals>,
-    pub residents: Vec<Residents>,
     pub weather: WeatherData,
     pub news: Vec<NewsItem>,
 }
