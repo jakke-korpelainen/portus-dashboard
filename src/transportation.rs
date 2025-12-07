@@ -135,7 +135,7 @@ fn format_minutes_diff_from_now(seconds_since_midnight: i64) -> String {
     let diff_minutes = diff_seconds / 60;
 
     // Format the string
-    format!("in {} minutes", diff_minutes)
+    format!("in {} min", diff_minutes)
 }
 
 fn parse_times_to_arrivals(data: Data) -> Vec<Arrivals> {
