@@ -1,0 +1,40 @@
+<!-- News Section -->
+<div class="border-2 border-gray-400 bg-white p-4 rounded-lg shadow-md">
+  <h3 class="m-0 pb-5 text-black mb-5">
+    News
+    <span class="block text-gray-400">What is going on in the building and in the area</span>
+  </h3>
+  <div class="grid gap-3">
+    {% for item in news %}
+      <div class="p-4 rounded-lg border border-gray-300">
+        <div class="flex items-start gap-3">
+          {% if item.of_type == "info" %}
+          <div class="rounded-full bg-gray-400 p-3">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+            </svg>
+          </div>
+          {% endif %}
+          {% if item.of_type == "alert" %}
+          <div class="rounded-full bg-red-500 p-3">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+          </div>
+          {% endif %}
+          {% if item.of_type == "board" %}
+          <div class="rounded-full bg-blue-500 p-3">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+          </div>
+          {% endif %}
+          <div class="space-y-2">
+            <h5 class="text-black font-bold m-0">{{ item.heading }}</h5>
+            <p class="text-sm text-black m-0">{{ item.content }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
