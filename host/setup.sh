@@ -22,36 +22,24 @@ if [ "$(id -u)" -ne 0 ]; then
     exit $?
 fi
 
+cat <<EOL > /etc/systemd/logind.conf
+[Login]
+HandleLidSwitch=ignore
+IdleAction=ignore
+EOL
+systemctl restart systemd-logind
+
+echo "installing host packages"
+apt update
+apt install -y --no-install-recommends sway chromium xwayland kitty
+
+echo "configuring ${KIOSK_USER} user"
 # ensure kiosk user & permissions
 adduser ${KIOSK_USER}
 usermod -aG video,input,render ${KIOSK_USER}
 mkdir -p "${KIOSK_USER_RUN}"
 chown "${KIOSK_USER}" "${KIOSK_USER_RUN}"
 chmod 0700 "${KIOSK_USER_RUN}"
-
-apt update
-
-# Check if portus-dashboard is installed
-echo "checking if binary is installed"
-if ! command -v portus-dashboard &> /dev/null; then
-    echo "portus-dashboard is not installed. Compiling from sources"
-    apt install -y git curl build-essential
-    cd /tmp
-    git clone https://github.com/jakke-korpelainen/portus-dashboard.git
-    cd portus-dashboard
-
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    . $HOME/.cargo/env
-    rustup target add x86_64-unknown-linux-musl
-    cargo build --release
-    install target/release/portus-dashboard /usr/local/bin
-    cd ${INIT_DIR}
-fi
-
-echo "installing host packages"
-apt install -y --no-install-recommends sway chromium xwayland kitty
-
-echo "configuring ${KIOSK_USER} user"
 mkdir -p "/home/${KIOSK_USER}/.config/sway"
 cat <<EOL > ${SWAY_CONFIG}
 output * bg #000000 solid_color
@@ -74,6 +62,35 @@ input * {
 }
 exec chromium --kiosk --no-first-run --disable-infobars --disable-session-crashed-bubble --disable-restore-session-state ${KIOSK_URL}
 EOL
+
+# setup autologin to tty1
+mkdir -p /etc/systemd/system/getty@tty1.service.d
+cat <<EOL > /etc/systemd/system/getty@tty1.service.d/override.conf
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin ${KIOSK_USER} --noclear %I $TERM
+Type=idle
+EOL
+
+cat <<EOL > /home/${KIOSK_USER}/.bash_profile
+export XDG_SESSION_TYPE=wayland
+export XDG_RUNTIME_DIR=${KIOSK_USER_RUN}
+exec sway
+EOL
+
+if ! command -v portus-dashboard &> /dev/null; then
+    echo "portus-dashboard is not installed. Compiling from sources"
+    apt install -y git curl build-essential
+    cd /tmp
+    git clone https://github.com/jakke-korpelainen/portus-dashboard.git
+    cd portus-dashboard
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    . $HOME/.cargo/env
+    rustup target add x86_64-unknown-linux-musl
+    cargo build --release
+    install target/release/portus-dashboard /usr/local/bin
+    cd ${INIT_DIR}
+fi
 
 cat <<EOL > ${SYSTEMD_DASHBOARD}
 [Unit]
@@ -98,30 +115,7 @@ EOL
 systemctl daemon-reload
 systemctl enable portus-dashboard
 systemctl start portus-dashboard
-echo "dashboard systemd service created"
-
-# setup autologin to tty1
-mkdir -p /etc/systemd/system/getty@tty1.service.d
-cat <<EOL > /etc/systemd/system/getty@tty1.service.d/override.conf
-[Service]
-ExecStart=
-ExecStart=-/sbin/agetty --autologin ${KIOSK_USER} --noclear %I $TERM
-Type=idle
-EOL
-
-cat <<EOL > /home/${KIOSK_USER}/.bash_profile
-export XDG_SESSION_TYPE=wayland
-export XDG_RUNTIME_DIR=${KIOSK_USER_RUN}
-exec sway
-EOL
-
-cat <<EOL > /etc/systemd/logind.conf
-[Login]
-HandleLidSwitch=ignore
-IdleAction=ignore
-EOL
-
-systemctl restart systemd-logind
+echo "portus-dashboard systemd complete"
 
 # wait for user confirmation before rebooting
 echo -n "reboot? (y/n): "
