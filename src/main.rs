@@ -22,7 +22,7 @@ async fn start_web_server() {
     let app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(dashboard::dashboard))
-        .nest_service("/public", ServeDir::new("public"));
+        .nest_service("/assets", ServeDir::new("assets"));
 
     let server_url = format!("0.0.0.0:{}", WEB_SERVER_PORT);
     let listener = tokio::net::TcpListener::bind(server_url).await.unwrap();
