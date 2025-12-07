@@ -8,6 +8,7 @@
 # CONFIG
 INIT_DIR=$(pwd)
 XINIT_CONFIG=/home/autostart/.xinitrc
+AUTOSTART_BASH_CONFIG=/home/autostart/.bashrc
 SYSTEMD_DASHBOARD=/etc/systemd/system/portus-dashboard.service
 DASHBOARD_URL=http://localhost:3000
 WIDTH=1080
@@ -92,13 +93,11 @@ ExecStart=/sbin/agetty --autologin autostart --noclear %I $TERM
 Type=idle
 EOL
 
-# setup bash for startx on tty1
-if ! grep -q "startx" /home/autostart/.bashrc; then
-  cat <<EOL >> /home/autostart/.bashrc
-if [ -z "\$DISPLAY" ] && [ "\$(tty)" = "/dev/tty1" ]; then
-  startx
-fi
-  EOL
+# setup startx tty1 to autostart bashrc
+if ! grep -q "startx" ${AUTOSTART_BASH_CONFIG}; then
+  echo 'if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then' >> ${AUTOSTART_BASH_CONFIG}
+  echo '  startx' >> ${AUTOSTART_BASH_CONFIG}
+  echo 'fi' >> ${AUTOSTART_BASH_CONFIG}
 fi
 
 # wait for user confirmation before rebooting
