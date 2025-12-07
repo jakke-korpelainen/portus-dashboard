@@ -12,8 +12,8 @@ SYSTEMD_DASHBOARD=/etc/systemd/system/portus-dashboard.service
 SWAY_LANG=fi
 SWAY_CONFIG="/home/${KIOSK_USER}/.config/sway/config"
 SWAY_STARTUP=/home/${KIOSK_USER}/sway_startup.sh
-HEIGHT=1920
-WIDTH=1080
+WIDTH=1920
+HEIGHT=1080
 REFRESH_RATE=60
 
 # ensure root
