@@ -43,10 +43,15 @@ jobs:
           name: portus-dashboard-${{ matrix.target }}
           path: target/${{ matrix.target }}/release/portus-dashboard
 
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh
+
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          files: target/${{ matrix.target }}/release/portus-dashboard
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ github.ref_name }} \
+            --title "Release ${{ github.ref_name }}" \
+            --notes "Release notes for ${{ github.ref_name }}" \
+            target/${{ matrix.target }}/release/portus-dashboard
