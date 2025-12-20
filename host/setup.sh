@@ -142,12 +142,12 @@ systemctl enable portus-dashboard
 systemctl start portus-dashboard
 echo "portus-dashboard systemd service complete"
 
-
 cat <<EOL > /home/${KIOSK_USER}/.bash_profile
 export XDG_SESSION_TYPE=wayland
 export XDG_RUNTIME_DIR=${KIOSK_USER_RUN}
-# exec sway
+exec sway
 EOL
+chown ${KIOSK_USER} /home/${KIOSK_USER}/.bash_profile
 
 # wait for user confirmation before rebooting
 echo -n "reboot? (y/n): "
