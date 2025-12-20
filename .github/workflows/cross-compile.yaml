@@ -20,8 +20,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           gh release create ${{ github.ref_name }} \
-            --title "Release ${{ github.ref_name }}" \
-            --notes "Release notes for ${{ github.ref_name }}"
+            --generate-notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -73,6 +72,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           gh release upload ${{ github.ref_name }} \
-            target/${{ matrix.target }}/release/portus-dashboard
+            target/${{ matrix.target }}/release/portus-dashboard \
+            --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
