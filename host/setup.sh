@@ -77,6 +77,8 @@ input * {
 seat * hide_cursor 1000
 exec ${SWAY_STARTUP}
 EOL
+chmod +x ${SWAY_CONFIG}
+chown ${KIOSK_USER} ${SWAY_CONFIG}
 
 cat <<EOL > ${SWAY_STARTUP}
 #!/bin/sh
