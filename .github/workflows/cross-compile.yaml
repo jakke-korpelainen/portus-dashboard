@@ -71,8 +71,10 @@ jobs:
       - name: Upload Release Asset
         if: startsWith(github.ref, 'refs/tags/')
         run: |
+          mv target/${{ matrix.target }}/release/portus-dashboard target/${{ matrix.target }}/release/portus-dashboard-${{ matrix.target }}
           gh release upload ${{ github.ref_name }} \
-            target/${{ matrix.target }}/release/portus-dashboard \
+            target/${{ matrix.target }}/release/portus-dashboard-${{ matrix.target }} \
             --clobber
+
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
