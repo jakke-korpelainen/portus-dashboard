@@ -1,5 +1,8 @@
 # Dashboard Proto for Housing Company
 
+[![Test Suite](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/rust.yml/badge.svg)](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/rust.yml)
+[![Cross-Compile](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/cross-compile.yaml/badge.svg)](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/cross-compile.yaml)
+
 ## Development
 
 1. Get API Key from [Digitransit.fi](https://digitransit.fi/en/developers/)
@@ -7,7 +10,6 @@
 3. Run `cargo run`
 5. [http://localhost:8080](http://localhost:8080)
 
-[![Test Suite](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/rust.yml/badge.svg)](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/rust.yml)
 
 ## Host Setup
 
