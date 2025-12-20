@@ -17,8 +17,7 @@ h2 {
 }
 
 .grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     flex-grow: 1;
 }
 
@@ -27,8 +26,8 @@ h2 {
 }
 
 main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     padding: 1rem;
 }

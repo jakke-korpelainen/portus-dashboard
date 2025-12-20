@@ -22,6 +22,8 @@ pub async fn dashboard_primary() -> impl IntoResponse {
     })
 }
 
+// basic handler that responds with a static string
+#[axum::debug_handler]
 pub async fn dashboard_secondary() -> impl IntoResponse {
     // weather worker
     let handle_weather = task::spawn(async {

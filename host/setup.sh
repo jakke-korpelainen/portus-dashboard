@@ -5,14 +5,17 @@
 
 # CONFIG
 INIT_DIR=$(pwd)
-KIOSK_USER=autostart
+SYSTEMD_DASHBOARD="/etc/systemd/system/portus-dashboard.service"
+DASHBOARD_PORT=8080
+DASHBOARD_SECRETS_FILE="/etc/portus-dashboard/secrets"
+KIOSK_USER="autostart"
 KIOSK_USER_RUN="/run/user/$(id -u $KIOSK_USER)"
-KIOSK_URL=http://localhost:3000
-SYSTEMD_DASHBOARD=/etc/systemd/system/portus-dashboard.service
-DASHBOARD_SECRETS_FILE=/etc/portus-dashboard/secrets
-SWAY_LANG=fi
+KIOSK_URL="http://localhost:${DASHBOARD_PORT}"
+SWAY_LANG="fi"
 SWAY_CONFIG="/home/${KIOSK_USER}/.config/sway/config"
-SWAY_STARTUP=/home/${KIOSK_USER}/sway_startup.sh
+SWAY_STARTUP="/home/${KIOSK_USER}/sway_startup.sh"
+RUST_TARGET="aarch64-unknown-linux-gnu" # raspberry pi
+# RUST_TARGET=x86_64-unknown-linux-musl # for regular debian etc
 WIDTH=1920
 HEIGHT=1080
 REFRESH_RATE=60
@@ -105,11 +108,6 @@ ExecStart=-/sbin/agetty --autologin ${KIOSK_USER} --noclear %I $TERM
 Type=idle
 EOL
 
-cat <<EOL > /home/${KIOSK_USER}/.bash_profile
-export XDG_SESSION_TYPE=wayland
-export XDG_RUNTIME_DIR=${KIOSK_USER_RUN}
-exec sway
-EOL
 
 if ! command -v portus-dashboard &> /dev/null; then
     echo "portus-dashboard is not installed. Compiling from sources"
@@ -119,7 +117,8 @@ if ! command -v portus-dashboard &> /dev/null; then
     cd portus-dashboard
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
     . $HOME/.cargo/env
-    rustup target add x86_64-unknown-linux-musl
+    rustup default stable
+    rustup target add $RUST_TARGET
     cargo build --release
     install target/release/portus-dashboard /usr/local/bin
     cd ${INIT_DIR}
@@ -143,6 +142,7 @@ ExecStart=/usr/local/bin/portus-dashboard
 Restart=always
 RestartSec=5s
 Environment=RUST_LOG=info
+Environment=PORT=${DASHBOARD_PORT}
 LoadCredential=DIGITRANSIT_SUBSCRIPTION_KEY:${DASHBOARD_SECRETS_FILE}
 StandardOutput=syslog
 StandardError=syslog
@@ -156,6 +156,13 @@ systemctl daemon-reload
 systemctl enable portus-dashboard
 systemctl start portus-dashboard
 echo "portus-dashboard systemd service complete"
+
+
+cat <<EOL > /home/${KIOSK_USER}/.bash_profile
+export XDG_SESSION_TYPE=wayland
+export XDG_RUNTIME_DIR=${KIOSK_USER_RUN}
+# exec sway
+EOL
 
 # wait for user confirmation before rebooting
 echo -n "reboot? (y/n): "
