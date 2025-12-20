@@ -2,6 +2,7 @@ use once_cell::sync::Lazy;
 use std::env;
 
 pub struct Config {
+    pub port: String,
     pub digitransit_subscription_key: String,
 }
 
@@ -16,8 +17,10 @@ pub fn get_env_value(env_name: &str) -> String {
     env_value
 }
 
+const ENV_PORT_NAME: &str = "PORT";
 const ENV_DIGITRANSIT_SUBSCRIPTION_KEY_NAME: &str = "DIGITRANSIT_SUBSCRIPTION_KEY";
 
 pub static CONFIG: Lazy<Config> = Lazy::new(|| Config {
+    port: get_env_value(ENV_PORT_NAME),
     digitransit_subscription_key: get_env_value(ENV_DIGITRANSIT_SUBSCRIPTION_KEY_NAME),
 });
