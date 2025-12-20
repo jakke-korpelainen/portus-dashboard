@@ -82,23 +82,6 @@ chown ${KIOSK_USER} ${SWAY_CONFIG}
 
 cat <<EOL > ${SWAY_STARTUP}
 #!/bin/sh
-
-# Function to check if the server is up and responds with 200 OK
-check_server() {
-  status_code=\$(curl -o /dev/null -s -w "%{http_code}\n" ${KIOSK_URL})
-  if [ "\$status_code" -eq 200 ]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-# Wait until the server is up and responds with 200 OK
-until check_server; do
-  echo "Waiting for the dashboard service to be ready..."
-  sleep 1
-done
-
 exec firefox -popups -chrome -kiosk -url "${KIOSK_URL}"
 EOL
 chmod +x ${SWAY_STARTUP}
