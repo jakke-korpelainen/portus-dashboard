@@ -28,6 +28,8 @@ jobs:
   build-and-upload:
     needs: create-release # Ensure the release is created first
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Re
     strategy:
       matrix:
         target:
