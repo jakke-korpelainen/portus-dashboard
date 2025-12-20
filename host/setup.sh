@@ -74,6 +74,7 @@ output Virtual-1 {
 input * {
  xkb_layout "${SWAY_LANG}"
 }
+seat * hide_cursor 1000
 exec ${SWAY_STARTUP}
 EOL
 
