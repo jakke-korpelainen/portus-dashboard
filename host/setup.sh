@@ -7,6 +7,7 @@
 INIT_DIR=$(pwd)
 SYSTEMD_DASHBOARD="/etc/systemd/system/portus-dashboard.service"
 DASHBOARD_PORT=8080
+DASHBOARD_REPO_URL=https://github.com/jakke-korpelainen/portus-dashboard
 DASHBOARD_SECRETS_FILE="/etc/portus-dashboard/secrets"
 KIOSK_USER="autostart"
 KIOSK_USER_RUN="/run/user/$(id -u $KIOSK_USER)"
@@ -112,7 +113,7 @@ if ! command -v portus-dashboard &> /dev/null; then
     echo "portus-dashboard is not installed. Downloading precompiled for ${TARGET}"
     cd /tmp
     # Replace the URL with the actual download link for the precompiled binary
-    curl -L -o portus-dashboard https://github.com/jakke-korpelainen/portus-dashboard/releases/latest/download/portus-dashboard-${TARGET}
+    curl -L -o portus-dashboard ${DASHBOARD_REPO_URL}/releases/latest/download/portus-dashboard-${TARGET}
     chmod +x portus-dashboard
     install portus-dashboard /usr/local/bin
     cd ${INIT_DIR}
