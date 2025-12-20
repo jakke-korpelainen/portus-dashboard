@@ -85,6 +85,7 @@ cat <<EOL > ${SWAY_STARTUP}
 exec firefox -popups -chrome -kiosk -url "${KIOSK_URL}"
 EOL
 chmod +x ${SWAY_STARTUP}
+chown ${KIOSK_USER} ${SWAY_STARTUP}
 
 # setup autologin to tty1
 mkdir -p /etc/systemd/system/getty@tty1.service.d
