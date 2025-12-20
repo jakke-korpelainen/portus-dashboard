@@ -14,8 +14,8 @@ KIOSK_URL="http://localhost:${DASHBOARD_PORT}"
 SWAY_LANG="fi"
 SWAY_CONFIG="/home/${KIOSK_USER}/.config/sway/config"
 SWAY_STARTUP="/home/${KIOSK_USER}/sway_startup.sh"
-RUST_TARGET="aarch64-unknown-linux-gnu" # raspberry pi
-# RUST_TARGET=x86_64-unknown-linux-musl # for regular debian etc
+TARGET="aarch64-unknown-linux-gnu" # raspberry pi
+# TARGET=x86_64-unknown-linux-musl # for regular debian etc
 WIDTH=1920
 HEIGHT=1080
 REFRESH_RATE=60
@@ -108,20 +108,17 @@ ExecStart=-/sbin/agetty --autologin ${KIOSK_USER} --noclear %I $TERM
 Type=idle
 EOL
 
-
 if ! command -v portus-dashboard &> /dev/null; then
-    echo "portus-dashboard is not installed. Compiling from sources"
-    apt install -y git curl build-essential
+    echo "portus-dashboard is not installed. Downloading precompiled for ${TARGET}"
     cd /tmp
-    git clone https://github.com/jakke-korpelainen/portus-dashboard.git
-    cd portus-dashboard
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    . $HOME/.cargo/env
-    rustup default stable
-    rustup target add $RUST_TARGET
-    cargo build --release
-    install target/release/portus-dashboard /usr/local/bin
+    # Replace the URL with the actual download link for the precompiled binary
+    curl -L -o portus-dashboard https://github.com/jakke-korpelainen/portus-dashboard/releases/latest/download/portus-dashboard-${TARGET}
+    chmod +x portus-dashboard
+    install portus-dashboard /usr/local/bin
     cd ${INIT_DIR}
+    echo "portus-dashboard installed successfully."
+else
+    echo "portus-dashboard is already installed."
 fi
 
 echo "creating systemd-creds for portus-dashboard"
