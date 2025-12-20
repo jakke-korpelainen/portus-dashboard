@@ -1,18 +1,27 @@
-<div
-  id="residents"
-  class="grid grid-cols-1 gap-4 h-full"
->
-  {% for group in residents %}
-  <div class="p-5 bg-black rounded-lg flex-grow bg-repeat" style="background-image: url('/assets/residents/panel.png');">
-    <h3 class="text-2xl text-center text-white mt-0 mb-7">{{ group.floor }}</h3>
-    <ul class="m-0 list-none p-0 grid grid-cols-2 gap-2">
-      {% for resident in group.residents %}
-      <li class="m-0 grid grid-cols-4 gap-2 p-2 min-h-[2rem] items-center">
-        <span class="text-2xl text-white font-bold font-mono shadow-md">{{ resident.apartment }}</span>
-        <span class="text-2xl text-white col-span-3 font-bold font-mono tracking-widest leading-tight shadow-md">{{ resident.name }}</span>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endfor %}
+<div id="residents" class="grid grid-cols-1 gap-4 h-full w-full">
+    {% for group in residents %}
+    <div
+        class="p-5 bg-black rounded-lg flex-grow bg-repeat"
+        style="background-image: url(&quot;/assets/residents/panel.png&quot;)"
+    >
+        <h3 class="text-2xl text-center text-white mt-0 mb-7">
+            {{ group.floor }}
+        </h3>
+        <ul class="m-0 list-none p-0 grid grid-cols-2 gap-2">
+            {% for resident in group.residents %}
+            <li
+                class="m-0 grid grid-cols-4 gap-2 p-2 min-h-[2rem] items-center"
+            >
+                <span class="text-2xl text-white font-bold font-mono shadow-md"
+                    >{{ resident.apartment }}</span
+                >
+                <span
+                    class="text-2xl text-white col-span-3 font-bold font-mono tracking-widest leading-tight shadow-md"
+                    >{{ resident.name }}</span
+                >
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
 </div>
