@@ -1,6 +1,28 @@
 # Dashboard Proto for Housing Company
 
+## Development
+
+1. Get API Key from [Digitransit.fi](https://digitransit.fi/en/developers/)
+2. Assign expected env variables `PORT`, `DIGITRANSIT_SUBSCRIPTION_KEY`
+3. Run `cargo run`
+5. [http://localhost:8080](http://localhost:8080)
+
 [![Test Suite](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/rust.yml/badge.svg)](https://github.com/jakke-korpelainen/portus-dashboard/actions/workflows/rust.yml)
+
+## Host Setup
+
+`host/portus-dashboard.secrets` a file to pass the secrets during installation to be encrypted with systemd-creds encrypt
+`host/setup.sh` a setup script setting up the Debian trixie host machine. 
+
+These files should be mounted on an external usb storage device to the host machine for installation, the setup script is then also easily able to find the secrets from it.
+
+The script elevates to root priviliges and works best if ran right after a fresh debian desktop environmentless installation and logging in.
+
+The host setup script installs minimal wayland sway with firefox in kiosk mode and setups autologin for a kiosk user.
+
+The script also attempts now to do some resolution & vertical orientation setup, but this needs refinement to work consistently.
+
+## Summary
 
 A simple dashboard prototype for a housing company. The dashboard will eventually show the current weather, news, and nearby transit data. The dashboard is built with Rust and Axum, and uses the Digitransit API for transit data, and an Weather API (yr.no) for weather data. The dashboard is a work in progress and will be updated with more features in the future.
 
@@ -11,19 +33,6 @@ Aiming to run this on raspberry with a small screen in the lobby.
 **Rust key dependencies**
 
 askama, axum, reqwest, serde, serde_json, tokio
-
-## Host
-
-`host/portus-dashboard.secrets` a file to pass the secrets during installation to be encrypted with systemd-creds encrypt
-`host/setup.sh` a setup script for Debian trixie exists for setting up the host machine. 
-
-These files should be mounted on an external usb storage device to the host machine for installation, the setup script is then also easily able to find the secrets from it.
-
-The script elevates to root priviliges and works best if ran right after a fresh debian desktop environmentless installation and logging in.
-
-The host setup script installs minimal wayland sway with firefox in kiosk mode and setups autologin for a kiosk user.
-
-The script also attempts now to do some resolution & vertical orientation setup, but this needs refinement to work consistently.
 
 ## Features (planned)
 
@@ -61,10 +70,3 @@ Digitransit provides a free API for transport data in Finland.
 ### News
 
 TBA
-
-## Development
-
-1. Get API Key from [Digitransit.fi](https://digitransit.fi/en/developers/)
-2. Assign expected env variables `PORT`, `DIGITRANSIT_SUBSCRIPTION_KEY`
-3. Run `cargo run`
-5. [http://localhost:8080](http://localhost:8080)
