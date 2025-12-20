@@ -11,7 +11,7 @@
 5. [http://localhost:8080](http://localhost:8080)
 
 ## Releases
-Pre-compiled binaries for aarm64 and x86_64 exists under [releases](https://github.com/jakke-korpelainen/portus-dashboard/releases).
+Pre-compiled binaries for arm (aarch64) and x86_64 exists under [releases](https://github.com/jakke-korpelainen/portus-dashboard/releases).
 
 ## Host Setup
 
