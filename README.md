@@ -65,7 +65,6 @@ TBA
 ## Development
 
 1. Get API Key from [Digitransit.fi](https://digitransit.fi/en/developers/)
-2. Create `.env`
-3. Populate it with `DIGITRANSIT_SUBSCRIPTION_KEY=your-api-key`
-4. Run `cargo run`
-5. [http://localhost:3000](http://localhost:3000)
+2. Assign expected env variables `PORT`, `DIGITRANSIT_SUBSCRIPTION_KEY`
+3. Run `cargo run`
+5. [http://localhost:8080](http://localhost:8080)
